@@ -1,0 +1,541 @@
+{
+  "respondent_name": "Max",
+  "organization_name": "Cmax",
+  "phase": "phase_1_structured_analyzer",
+  "overall": {
+    "composite_score": 2.88,
+    "maturity_stage": "Exploring",
+    "needs_human_followup": true,
+    "assessment_quality_note": "Confidence is highest where responses include named owners, specific KPIs, tool names, and review cadence. 3 of 20 question(s) returned low-confidence scores — validated findings are flagged accordingly."
+  },
+  "dimensions": [
+    {
+      "category": "Culture & Workforce",
+      "avg_score": null,
+      "avg_confidence": 0.5,
+      "confidence_label": "Med",
+      "summary_flags": [],
+      "question_count": 1
+    },
+    {
+      "category": "Data Readiness",
+      "avg_score": 2.33,
+      "avg_confidence": 0.5,
+      "confidence_label": "Med",
+      "summary_flags": [],
+      "question_count": 4
+    },
+    {
+      "category": "Governance Readiness",
+      "avg_score": 2.67,
+      "avg_confidence": 0.6,
+      "confidence_label": "Med",
+      "summary_flags": [],
+      "question_count": 3
+    },
+    {
+      "category": "Leadership & Vision",
+      "avg_score": 1.75,
+      "avg_confidence": 0.56,
+      "confidence_label": "Med",
+      "summary_flags": [
+        "Likely near-term blocker for enterprise AI scaling (Strategic Alignment)",
+        "CRITICAL: Anti-AI Sentiment Detected — leadership resistance or active rejection of AI investment stated in response"
+      ],
+      "question_count": 5
+    },
+    {
+      "category": "Technology Readiness",
+      "avg_score": 4.0,
+      "avg_confidence": 0.5,
+      "confidence_label": "Med",
+      "summary_flags": [],
+      "question_count": 4
+    },
+    {
+      "category": "Ways of Working",
+      "avg_score": 3.67,
+      "avg_confidence": 0.47,
+      "confidence_label": "Low",
+      "summary_flags": [
+        "Score-Evidence Contradiction: organizational conflict or disagreement cited at score 4/5",
+        "Score-Evidence Contradiction: organizational conflict or disagreement cited at score 5/5"
+      ],
+      "question_count": 3
+    }
+  ],
+  "per_question": [
+    {
+      "question_id": "L1",
+      "category": "Leadership & Vision",
+      "label": "Strategic AI Vision",
+      "self_score": 2,
+      "inferred_stage": "Exploring",
+      "confidence": 0.6,
+      "confidence_label": "Med",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": true,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "L2",
+      "category": "Leadership & Vision",
+      "label": "Corporate Strategy Alignment",
+      "self_score": 2,
+      "inferred_stage": "Exploring",
+      "confidence": 0.6,
+      "confidence_label": "Med",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": true,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "L3",
+      "category": "Leadership & Vision",
+      "label": "AI Enterprise Metrics",
+      "self_score": 1,
+      "inferred_stage": "Nascent",
+      "confidence": 0.6,
+      "confidence_label": "Med",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": true,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "L_Risk",
+      "category": "Leadership & Vision",
+      "label": "AI Risk Appetite",
+      "self_score": 2,
+      "inferred_stage": "Exploring",
+      "confidence": 0.6,
+      "confidence_label": "Med",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": true,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "Q_Decision",
+      "category": "Leadership & Vision",
+      "label": "AI Decision Ownership",
+      "self_score": null,
+      "inferred_stage": "Not Scored",
+      "confidence": 0.4,
+      "confidence_label": "Low",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": true,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [
+        "CRITICAL: Anti-AI Sentiment Detected — leadership resistance or active rejection of AI investment stated in response"
+      ],
+      "recommended_followups": [
+        "The evidence indicates leadership resistance or active rejection of AI investment. This is the single highest-risk finding in this assessment. Who specifically holds this position, what is their stated rationale, and what would change their position?",
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated."
+      ],
+      "supporting_text_excerpt": "do not invest in AI"
+    },
+    {
+      "question_id": "W1",
+      "category": "Ways of Working",
+      "label": "Technology Designed for Business",
+      "self_score": 4,
+      "inferred_stage": "Integrated",
+      "confidence": 0.4,
+      "confidence_label": "Low",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": true,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [
+        "Score-Evidence Contradiction: organizational conflict or disagreement cited at score 4/5"
+      ],
+      "recommended_followups": [
+        "The evidence describes active disagreement or organizational resistance in an area you rated 4/5. What is the specific unresolved conflict, and who has the authority and mandate to resolve it within 30 days?",
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated."
+      ],
+      "supporting_text_excerpt": "Many disagreements in planning, deployment, and budget"
+    },
+    {
+      "question_id": "W_Conflict",
+      "category": "Ways of Working",
+      "label": "Conflict Resolution",
+      "self_score": 2,
+      "inferred_stage": "Exploring",
+      "confidence": 0.6,
+      "confidence_label": "Med",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": true,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": "Many disagreements in planning, deployment, and budget"
+    },
+    {
+      "question_id": "W3",
+      "category": "Ways of Working",
+      "label": "Utilize AI-Driven Insights",
+      "self_score": 5,
+      "inferred_stage": "Optimized",
+      "confidence": 0.4,
+      "confidence_label": "Low",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": true,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [
+        "Score-Evidence Contradiction: organizational conflict or disagreement cited at score 5/5"
+      ],
+      "recommended_followups": [
+        "The evidence describes active disagreement or organizational resistance in an area you rated 5/5. What is the specific unresolved conflict, and who has the authority and mandate to resolve it within 30 days?",
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated."
+      ],
+      "supporting_text_excerpt": "Many disagreements in planning, deployment, and budget"
+    },
+    {
+      "question_id": "Q_Concerns",
+      "category": "Culture & Workforce",
+      "label": "Employee Concerns",
+      "self_score": null,
+      "inferred_stage": "Not Scored",
+      "confidence": 0.5,
+      "confidence_label": "Med",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": false,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": "Money and hiring new employees"
+    },
+    {
+      "question_id": "G1",
+      "category": "Governance Readiness",
+      "label": "Solid Governance Structure",
+      "self_score": 3,
+      "inferred_stage": "Established",
+      "confidence": 0.6,
+      "confidence_label": "Med",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": true,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "G4",
+      "category": "Governance Readiness",
+      "label": "Effective Risk Mitigation",
+      "self_score": 3,
+      "inferred_stage": "Established",
+      "confidence": 0.6,
+      "confidence_label": "Med",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": true,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "G_Shadow",
+      "category": "Governance Readiness",
+      "label": "Shadow AI Confidence",
+      "self_score": 2,
+      "inferred_stage": "Exploring",
+      "confidence": 0.6,
+      "confidence_label": "Med",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": true,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "T1",
+      "category": "Technology Readiness",
+      "label": "Modern Cloud Infrastructure",
+      "self_score": 4,
+      "inferred_stage": "Integrated",
+      "confidence": 0.5,
+      "confidence_label": "Med",
+      "evidence_strength": 0,
+      "evidence_strength_label": "None",
+      "has_supporting_audio": false,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "T2",
+      "category": "Technology Readiness",
+      "label": "Core Systems AI Ready",
+      "self_score": 3,
+      "inferred_stage": "Established",
+      "confidence": 0.5,
+      "confidence_label": "Med",
+      "evidence_strength": 0,
+      "evidence_strength_label": "None",
+      "has_supporting_audio": false,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "T4",
+      "category": "Technology Readiness",
+      "label": "ML Ops Maturity",
+      "self_score": 4,
+      "inferred_stage": "Integrated",
+      "confidence": 0.5,
+      "confidence_label": "Med",
+      "evidence_strength": 0,
+      "evidence_strength_label": "None",
+      "has_supporting_audio": false,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "T5",
+      "category": "Technology Readiness",
+      "label": "Security Architecture",
+      "self_score": 5,
+      "inferred_stage": "Optimized",
+      "confidence": 0.5,
+      "confidence_label": "Med",
+      "evidence_strength": 0,
+      "evidence_strength_label": "None",
+      "has_supporting_audio": false,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "D1",
+      "category": "Data Readiness",
+      "label": "Data structured & clean",
+      "self_score": 2,
+      "inferred_stage": "Exploring",
+      "confidence": 0.5,
+      "confidence_label": "Med",
+      "evidence_strength": 0,
+      "evidence_strength_label": "None",
+      "has_supporting_audio": false,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "D2",
+      "category": "Data Readiness",
+      "label": "Data integrated for AI",
+      "self_score": 3,
+      "inferred_stage": "Established",
+      "confidence": 0.5,
+      "confidence_label": "Med",
+      "evidence_strength": 0,
+      "evidence_strength_label": "None",
+      "has_supporting_audio": false,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "D3",
+      "category": "Data Readiness",
+      "label": "Data Dictionary and Ownership",
+      "self_score": 2,
+      "inferred_stage": "Exploring",
+      "confidence": 0.5,
+      "confidence_label": "Med",
+      "evidence_strength": 0,
+      "evidence_strength_label": "None",
+      "has_supporting_audio": false,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": null
+    },
+    {
+      "question_id": "Q_Vision",
+      "category": "Data Readiness",
+      "label": "Future-State Vision",
+      "self_score": null,
+      "inferred_stage": "Not Scored",
+      "confidence": 0.5,
+      "confidence_label": "Med",
+      "evidence_strength": 1,
+      "evidence_strength_label": "Weak",
+      "has_supporting_audio": false,
+      "mentions_metric": false,
+      "mentions_owner": false,
+      "mentions_cadence": false,
+      "mentions_system": false,
+      "red_flags": [],
+      "recommended_followups": [
+        "Who specifically owns this capability today — name, title, and reporting line? Without a named accountable executive, this rating cannot be validated.",
+        "What is the single north-star KPI used to measure progress here? If no KPI exists, what would a meaningful measurement look like in the next 90 days?"
+      ],
+      "supporting_text_excerpt": "Agents running day to day work with execs making decisions"
+    }
+  ],
+  "top_blockers": [
+    "Leadership & Vision (Strategic Alignment) represents a structural execution risk. The current maturity score of 1.75/5 (Nascent) indicates that without named ownership and a defined measurement cadence, AI scaling in this domain will stall at proof-of-concept. Prioritize a 30-day sprint to assign an accountable executive and establish a north-star KPI."
+  ],
+  "quick_wins": [],
+  "next_best_actions": [
+    "Validate 2 high-score area(s) with low confidence (W1, W3): request one concrete artifact per question — a policy document, a dashboard screenshot, or a named system — within the next 10 business days.",
+    "Assign named executive owners across 5 category(ies) (Data Readiness, Governance Readiness, Leadership & Vision). No area without a named owner and a defined 90-day KPI should be rated above 3/5.",
+    "Define a single north-star KPI for each unmeasured dimension. 17 question response(s) contain no measurable outcome. Without measurement, maturity claims are unverifiable.",
+    "Resolve score-evidence contradictions in W1, W3. A score of 4–5 cannot coexist with manually executed or informal processes. Either upgrade the process or revise the self-assessment downward.",
+    "Schedule a 60-minute structured interview with the respondent. Multiple low-confidence findings require live validation before this assessment can be used to inform investment or strategic planning decisions."
+  ],
+  "hybrid_analyst": {
+    "role_compared_to": "Tech Lead",
+    "role_avg_composite": 3.29,
+    "respondent_zscore": -1.76,
+    "zscore_interpretation": "This respondent sits 1.8 SD below the Tech Lead cohort. Significant pessimism relative to peers — either genuine underperformance or a highly critical respondent. Cross-reference with other respondent data.",
+    "perception_gaps": [
+      "Strategic Blind Spot — Leadership & Vision: Tech Lead avg 1.8 vs Senior Leadership avg 4.3 (gap: 2.5, respondent is below peer cohort)",
+      "Strategic Blind Spot — Leadership & Vision: Tech Lead avg 1.8 vs HR avg 3.7 (gap: 1.9, respondent is below peer cohort)",
+      "Strategic Blind Spot — Leadership & Vision: Tech Lead avg 1.8 vs Finance avg 3.5 (gap: 1.8, respondent is below peer cohort)"
+    ],
+    "outlier_flags": [
+      "Pessimism Outlier: this respondent scores 1.8 standard deviations below their Tech Lead cohort. Validate whether this reflects genuine operational insight or reporting bias."
+    ],
+    "benchmark_note": "Compared against 10 Tech Lead respondents in a 50-person synthetic benchmark. Respondent composite (2.88) vs role avg (3.29). Z-score: -1.76."
+  }
+}

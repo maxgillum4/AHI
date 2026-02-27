@@ -1,0 +1,35 @@
+{
+  "payload_version": "1.0",
+  "respondent_name": "Chris Baxter",
+  "organization_name": "MidCo Industries",
+  "respondent_role": "Tech Lead",
+  "organization_unit": "IT Engineering",
+  "selected_sections": ["tech", "data"],
+  "questions": [
+    {
+      "question_id": "T1",
+      "category": "Technology Readiness",
+      "label": "AI Infrastructure Maturity",
+      "prompt": "We have production-grade ML infrastructure and deployment pipelines in place.",
+      "score": 4,
+      "typed_response": "We are fully AI-powered and leveraging cutting-edge transformative technology to drive synergistic outcomes."
+    },
+    {
+      "question_id": "D1",
+      "category": "Data Readiness",
+      "label": "Data Quality Ownership",
+      "prompt": "We have clearly assigned data quality ownership and a formal data dictionary.",
+      "score": 2,
+      "typed_response": "Ownership is informal. No formal data dictionary yet. Issues tracked ad hoc."
+    },
+    {
+      "question_id": "D2",
+      "category": "Data Readiness",
+      "label": "Data Accessibility",
+      "prompt": "Cross-functional data is formatted and available for model training.",
+      "score": 2,
+      "typed_response": null
+    }
+  ],
+  "justifications": []
+}

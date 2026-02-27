@@ -1,0 +1,3 @@
+root@MAX:~/ghostty/gtk4-layer-shell# ~/.local/bin/ghostty --version
+~/.local/bin/ghostty
+Ghostty 1.3.0-main+4c8f2bc77

@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AHI - Phase 1 Structured Analyzer</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 20px; max-width: 1100px; }
+    h1 { margin: 0 0 8px; }
+    .muted { color: #666; margin: 0 0 18px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 14px; margin: 12px 0; }
+    label { display: block; font-weight: 600; margin: 10px 0 6px; }
+    input[type="text"] { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; }
+    select, textarea, button { font-size: 14px; }
+    textarea { width: 100%; min-height: 90px; padding: 10px; border-radius: 10px; border: 1px solid #ccc; }
+    button { padding: 10px 12px; border-radius: 10px; border: 1px solid #ccc; background: #111; color: #fff; cursor: pointer; }
+    button.secondary { background: #fff; color: #111; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .inline { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .pill { padding: 5px 10px; border-radius: 999px; background: #f3f3f3; border: 1px solid #e6e6e6; font-size: 12px; }
+    pre { background: #0b0b0b; color: #eaeaea; padding: 14px; border-radius: 12px; overflow: auto; max-height: 420px; }
+    .small { font-size: 12px; color: #666; }
+    .ok { color: #0a7; font-weight: 700; }
+    .warn { color: #c60; font-weight: 700; }
+  </style>
+</head>
+
+<body>
+  <h1>AHI - Phase 1 Structured Analyzer</h1>
+  <p class="muted">Record a voice note per question - it transcribes via Whisper and is injected into your payload as supporting text + has_supporting_audio.</p>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>API Base</label>
+        <input id="apiBase" type="text" value="http://127.0.0.1:8001" />
+        <div class="small">If running elsewhere, change this. Endpoints used: <code>/api/transcribe-note</code> and <code>/api/analyze-assessment</code>.</div>
+      </div>
+      <div>
+        <label>Payload metadata</label>
+        <div class="row">
+          <input id="respondentName" type="text" value="Max" placeholder="Respondent name" />
+          <input id="orgName" type="text" value="CMax" placeholder="Organization name" />
+        </div>
+      </div>
+    </div>
+
+    <div class="inline" style="margin-top: 12px;">
+      <button class="secondary" id="loadExampleBtn" type="button">Load example payload from backend</button>
+      <span id="exampleStatus" class="pill">Example payload: not loaded</span>
+    </div>
+  </div>
+
+  <div id="questions"></div>
+
+  <div class="card">
+    <div class="inline">
+      <button id="analyzeBtn" type="button">Analyze Maturity</button>
+      <span id="submitStatus" class="pill">Ready</span>
+    </div>
+    <label>Server response</label>
+    <pre id="output">{}</pre>
+  </div>
+
+<script>
+/**
+ * Edit this list to match your schema/question IDs.
+ * The important part is question_id + category + label.
+ */
+const QUESTIONS = [
+  { question_id: "GOV_Q1", category: "Governance", label: "AI policies and review" },
+  { question_id: "DATA_Q1", category: "Data",       label: "Data quality ownership" },
+  { question_id: "LEAD_Q1", category: "Leadership", label: "Prioritization and value tracking" },
+];
+
+// This holds what you will POST to /api/analyze-assessment
+const responses = QUESTIONS.map(q => ({
+  question_id: q.question_id,
+  category: q.category,
+  label: q.label,
+
+  // Your analyzer already expects a score + supporting text/justification
+  self_score: null,
+
+  // typed justification (optional)
+  justification: "",
+
+  // audio support fields
+  has_supporting_audio: false,
+  supporting_text: "",        // we will append transcript here
+  transcript_language: "",
+  transcript_segments: null,  // optional
+}));
+
+let mediaRecorderByQid = {};
+let chunksByQid = {};
+let stream = null;
+
+// ------------------ helpers ------------------
+function apiBase() {
+  return document.getElementById("apiBase").value.trim().replace(/\/$/, "");
+}
+
+function setStatus(elId, text) {
+  const el = document.getElementById(elId);
+  el.textContent = text;
+}
+
+function pretty(obj) {
+  return JSON.stringify(obj, null, 2);
+}
+
+function getResponse(qid) {
+  return responses.find(r => r.question_id === qid);
+}
+
+function ensureMicStream() {
+  if (stream) return Promise.resolve(stream);
+  return navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
+    stream = s;
+    return stream;
+  });
+}
+
+// ------------------ UI render ------------------
+function renderQuestions() {
+  const root = document.getElementById("questions");
+  root.innerHTML = "";
+
+  for (const q of QUESTIONS) {
+    const r = getResponse(q.question_id);
+
+    const card = document.createElement("div");
+    card.className = "card";
+    card.id = `card_${q.question_id}`;
+
+    card.innerHTML = `
+      <div class="inline" style="justify-content: space-between;">
+        <div>
+          <div class="pill">${q.category}</div>
+          <h3 style="margin: 10px 0 2px;">${q.question_id} - ${q.label}</h3>
+          <div class="small">Tip: If you record audio, the transcript is appended to Supporting Text, and "has_supporting_audio" is set true.</div>
+        </div>
+        <div class="inline">
+          <label style="margin:0;">Score</label>
+          <select id="score_${q.question_id}">
+            <option value="">--</option>
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Typed justification (optional)</label>
+      <textarea id="just_${q.question_id}" placeholder="Type evidence, examples, owners, cadence, metrics..."></textarea>
+
+      <div class="inline" style="margin-top: 10px;">
+        <button type="button" class="secondary" id="rec_${q.question_id}">Start recording</button>
+        <button type="button" class="secondary" id="stop_${q.question_id}" disabled>Stop</button>
+        <span class="pill" id="audio_${q.question_id}">Audio: none</span>
+        <span class="pill" id="tx_${q.question_id}">Transcript: none</span>
+      </div>
+
+      <label>Supporting text (auto includes voice note transcript)</label>
+      <textarea id="support_${q.question_id}" placeholder="Will auto-fill with transcript when you record. You can also edit."></textarea>
+
+      <div class="small" id="meta_${q.question_id}"></div>
+    `;
+
+    root.appendChild(card);
+
+    // wire inputs
+    const scoreEl = document.getElementById(`score_${q.question_id}`);
+    const justEl = document.getElementById(`just_${q.question_id}`);
+    const supportEl = document.getElementById(`support_${q.question_id}`);
+
+    scoreEl.addEventListener("change", () => {
+      r.self_score = scoreEl.value ? Number(scoreEl.value) : null;
+    });
+
+    justEl.addEventListener("input", () => {
+      r.justification = justEl.value;
+    });
+
+    supportEl.addEventListener("input", () => {
+      r.supporting_text = supportEl.value;
+    });
+
+    // wire record buttons
+    document.getElementById(`rec_${q.question_id}`).addEventListener("click", () => startRecording(q.question_id));
+    document.getElementById(`stop_${q.question_id}`).addEventListener("click", () => stopRecording(q.question_id));
+  }
+}
+
+renderQuestions();
+
+// ------------------ recording + transcription ------------------
+async function startRecording(qid) {
+  const recBtn = document.getElementById(`rec_${qid}`);
+  const stopBtn = document.getElementById(`stop_${qid}`);
+  const audioPill = document.getElementById(`audio_${qid}`);
+  const txPill = document.getElementById(`tx_${qid}`);
+
+  try {
+    await ensureMicStream();
+
+    chunksByQid[qid] = [];
+    const mr = new MediaRecorder(stream);
+    mediaRecorderByQid[qid] = mr;
+
+    mr.ondataavailable = (e) => {
+      if (e.data && e.data.size > 0) chunksByQid[qid].push(e.data);
+    };
+
+    mr.onstart = () => {
+      audioPill.textContent = "Audio: recording...";
+      txPill.textContent = "Transcript: pending";
+      recBtn.disabled = true;
+      stopBtn.disabled = false;
+    };
+
+    mr.onstop = async () => {
+      audioPill.textContent = "Audio: uploading...";
+      const blob = new Blob(chunksByQid[qid], { type: mr.mimeType || "audio/webm" });
+      await transcribeAndAttach(qid, blob);
+      recBtn.disabled = false;
+      stopBtn.disabled = true;
+    };
+
+    mr.start();
+  } catch (err) {
+    console.error(err);
+    alert("Mic recording failed. Check browser microphone permissions.");
+  }
+}
+
+function stopRecording(qid) {
+  const mr = mediaRecorderByQid[qid];
+  if (mr && mr.state !== "inactive") mr.stop();
+}
+
+async function transcribeAndAttach(qid, audioBlob) {
+  const r = getResponse(qid);
+  const audioPill = document.getElementById(`audio_${qid}`);
+  const txPill = document.getElementById(`tx_${qid}`);
+  const supportEl = document.getElementById(`support_${qid}`);
+  const justEl = document.getElementById(`just_${qid}`);
+  const metaEl = document.getElementById(`meta_${qid}`);
+
+  try {
+    const fd = new FormData();
+    // Name matters - backend uses filename suffix sometimes
+    fd.append("audio", audioBlob, "note.webm");
+
+    const res = await fetch(`${apiBase()}/api/transcribe-note`, { method: "POST", body: fd });
+    const data = await res.json();
+
+    const transcript = (data.transcript || "").trim();
+    const language = data.language || "";
+    const segments = data.segments || null;
+
+    r.has_supporting_audio = true;
+    r.transcript_language = language;
+    r.transcript_segments = segments;
+
+    // Store transcript as supporting text (always)
+    if (!r.supporting_text || r.supporting_text.trim().length === 0) {
+      r.supporting_text = transcript;
+    } else {
+      r.supporting_text = `${r.supporting_text}\n\n[Voice note]\n${transcript}`;
+    }
+    supportEl.value = r.supporting_text;
+
+    // If typed justification empty, set it to transcript for compatibility with older analyzer logic
+    if (!r.justification || r.justification.trim().length === 0) {
+      r.justification = transcript;
+      justEl.value = r.justification;
+    } else {
+      // Keep typed justification as primary, but optionally append transcript:
+      // r.justification = `${r.justification}\n\n[Voice note]\n${transcript}`;
+      // justEl.value = r.justification;
+    }
+
+    audioPill.textContent = `Audio: ok (${Math.round(audioBlob.size/1024)} KB)`;
+    if (transcript.length > 0) {
+      txPill.textContent = `Transcript: ok (${transcript.length} chars)`;
+      txPill.className = "pill ok";
+    } else {
+      txPill.textContent = "Transcript: empty";
+      txPill.className = "pill warn";
+    }
+    metaEl.textContent = language ? `Detected language: ${language}` : "";
+  } catch (err) {
+    console.error(err);
+    audioPill.textContent = "Audio: error";
+    txPill.textContent = "Transcript: error";
+    alert("Transcription failed. Check server logs.");
+  }
+}
+
+// ------------------ analyze submit ------------------
+document.getElementById("analyzeBtn").addEventListener("click", analyzeNow);
+
+async function analyzeNow() {
+  setStatus("submitStatus", "Submitting...");
+  const out = document.getElementById("output");
+
+  const payload = {
+    payload_version: "1.0",
+    respondent_name: document.getElementById("respondentName").value.trim(),
+    organization_name: document.getElementById("orgName").value.trim(),
+    phase: "phase_1_structured_analyzer",
+
+    // Your backend schema likely expects an array of responses
+    responses: responses.map(r => ({
+      question_id: r.question_id,
+      category: r.category,
+      label: r.label,
+      self_score: r.self_score,
+      justification: r.justification,
+      has_supporting_audio: r.has_supporting_audio,
+      supporting_text: r.supporting_text,
+      transcript_language: r.transcript_language,
+      // You can omit segments to reduce payload size if you want:
+      // transcript_segments: r.transcript_segments,
+    })),
+  };
+
+  try {
+    const res = await fetch(`${apiBase()}/api/analyze-assessment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    out.textContent = pretty(data);
+    setStatus("submitStatus", "Done");
+  } catch (err) {
+    console.error(err);
+    setStatus("submitStatus", "Error");
+    out.textContent = String(err);
+  }
+}
+
+// ------------------ load example payload ------------------
+document.getElementById("loadExampleBtn").addEventListener("click", async () => {
+  const pill = document.getElementById("exampleStatus");
+  pill.textContent = "Example payload: loading...";
+  try {
+    const res = await fetch(`${apiBase()}/api/schema/example-payload`);
+    const data = await res.json();
+    pill.textContent = "Example payload: loaded (see console)";
+    console.log("EXAMPLE_PAYLOAD:", data);
+  } catch (e) {
+    pill.textContent = "Example payload: failed";
+  }
+});
+</script>
+</body>
+</html>

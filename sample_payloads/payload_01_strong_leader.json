@@ -1,0 +1,66 @@
+{
+  "payload_version": "1.0",
+  "respondent_name": "Sandra Wu",
+  "organization_name": "HealthSys Enterprise",
+  "respondent_role": "Senior Leadership",
+  "organization_unit": "Corporate Strategy",
+  "selected_sections": ["leadership", "data", "tech"],
+  "questions": [
+    {
+      "question_id": "L1",
+      "category": "Leadership & Vision",
+      "label": "Strategic AI Vision",
+      "prompt": "Our organization has a clear and compelling AI vision and roadmap in place.",
+      "score": 5,
+      "typed_response": null
+    },
+    {
+      "question_id": "L3",
+      "category": "Leadership & Vision",
+      "label": "AI Enterprise Metrics",
+      "prompt": "How mature are the KPIs used to track AI investment value and business ROI?",
+      "score": 4,
+      "typed_response": null
+    },
+    {
+      "question_id": "D1",
+      "category": "Data Readiness",
+      "label": "Data Quality Ownership",
+      "prompt": "We have clearly assigned data quality ownership and a formal data dictionary.",
+      "score": 3,
+      "typed_response": "We have a Chief Data Officer (CDO) since Q3 2025. Snowflake data catalog in place for 60% of production datasets. Monthly data quality review cadence."
+    },
+    {
+      "question_id": "D3",
+      "category": "Data Readiness",
+      "label": "Data Dictionary and Ownership",
+      "prompt": "We have clear data dictionaries and assigned domain ownership.",
+      "score": 3,
+      "typed_response": "Partial coverage. Finance and HR domains are fully documented with data stewards. Engineering datasets still ad hoc."
+    },
+    {
+      "question_id": "G1",
+      "category": "Governance Readiness",
+      "label": "AI Policies and Review",
+      "prompt": "Formal AI usage and governance policies exist and are reviewed regularly.",
+      "score": 4,
+      "typed_response": "AI Policy v3.0 approved by Risk Committee in Q4 2025. Quarterly compliance review chaired by CISO. Policy violations tracked in ServiceNow."
+    }
+  ],
+  "justifications": [
+    {
+      "category": "Leadership & Vision",
+      "tag_id": "L1",
+      "tag_label": "L1 - Strategic AI Vision",
+      "text": "CEO-sponsored AI Steering Committee meets every 6 weeks. $12M budget approved for FY2026. CTO owns the AI roadmap with quarterly board reporting.",
+      "has_audio": true
+    },
+    {
+      "category": "Data Readiness",
+      "tag_id": "D1",
+      "tag_label": "D1 - Data Quality Ownership",
+      "text": "CDO appointed September 2025. Data quality KPI: 95% completeness target. Current state: 87% completeness across Snowflake production tables.",
+      "has_audio": false
+    }
+  ]
+}
