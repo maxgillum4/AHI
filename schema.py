@@ -129,6 +129,7 @@ class PerQuestionResult(BaseModel):
     red_flags:                List[str]
     recommended_followups:    List[str]
     supporting_text_excerpt:  Optional[str]
+    evidence_id:              Optional[str] = None  # stable UUID for traceability
 
 
 class DimensionSummary(BaseModel):
@@ -177,10 +178,12 @@ class FollowupQueueItem(BaseModel):
     prior_score:             Optional[int]
     confidence:              float
     supporting_text_excerpt: Optional[str]
+    evidence_id:             Optional[str] = None  # matches PerQuestionResult.evidence_id
 
 
 class AnalysisResponse(BaseModel):
     """Full outbound response from /api/analyze-assessment."""
+    submission_id:     Optional[str] = None  # stable ID for follow-up sessions and DB queries
     respondent_name:   str
     organization_name: str
     phase:             str = "phase_1_structured_analyzer"

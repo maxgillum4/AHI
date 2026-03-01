@@ -323,6 +323,23 @@
             color: var(--text);
             white-space: pre-wrap;
         }
+        .justify-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+        .btn-justify-delete {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #aaa;
+            font-size: 0.9em;
+            padding: 0 2px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .btn-justify-delete:hover { color: #c0392b; }
 
         /* Report View */
         #report-container {
@@ -793,6 +810,287 @@
             background: rgba(21,149,145,0.05);
             border-top: 1px solid var(--border);
         }
+
+        /* --- Refreshed Analysis Panel (shown after follow-up) --- */
+        .refreshed-panel {
+            text-align: left;
+            border: 2px solid var(--primary);
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin: 14px 0;
+            background: rgba(21,149,145,0.04);
+        }
+        body.consultant-mode .refreshed-panel {
+            background: rgba(255,0,60,0.04);
+        }
+        .refreshed-panel-title {
+            font-weight: 800;
+            font-size: 0.92em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .refreshed-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.88em;
+        }
+        .refreshed-row:last-child { border-bottom: none; }
+        .refreshed-label { flex: 1; color: #888; }
+        .delta-up   { color: #27ae60; font-weight: 700; }
+        .delta-down { color: #c0392b; font-weight: 700; }
+        .delta-same { color: #888; }
+        .delta-arrow { font-size: 0.9em; color: #aaa; }
+
+        /* --- Trust Evidence Drawer --- */
+        #trust-drawer {
+            display: none;
+            position: fixed;
+            right: 0; top: 0;
+            width: 360px;
+            height: 100vh;
+            background: var(--card);
+            border-left: 3px solid var(--primary);
+            z-index: 9999;
+            box-shadow: -6px 0 32px rgba(0,0,0,0.12);
+            /* Flex column: header fixed, content scrollable */
+            flex-direction: column;
+        }
+        #trust-drawer.open { display: flex; }
+        body.consultant-mode #trust-drawer {
+            background: #121212;
+        }
+        .trust-drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0; /* never scroll the header away */
+        }
+        .trust-drawer-header strong {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+        }
+        .btn-trust-close {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 4px 10px;
+            font-size: 0.9em;
+            color: var(--text);
+        }
+        #trust-drawer-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 24px;
+        }
+        .trust-field-label {
+            font-size: 0.72em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #888;
+            margin: 14px 0 4px;
+        }
+        .trust-field-value {
+            font-size: 0.83em;
+            background: rgba(0,0,0,0.03);
+            padding: 8px;
+            border-radius: 4px;
+            word-break: break-all;
+            font-family: monospace;
+        }
+        body.consultant-mode .trust-field-value { background: rgba(255,255,255,0.05); }
+        .trust-field-text {
+            font-size: 0.85em;
+            line-height: 1.5;
+            font-style: italic;
+            color: #555;
+        }
+        body.consultant-mode .trust-field-text { color: #bbb; }
+        .trust-flag-item {
+            font-size: 0.81em;
+            color: #c0392b;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(192,57,43,0.12);
+        }
+        .trust-flag-item:last-child { border-bottom: none; }
+
+        /* --- Evidence button on verify items --- */
+        .btn-evidence {
+            font-size: 0.75em;
+            padding: 3px 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: transparent;
+            cursor: pointer;
+            color: var(--primary);
+            font-family: 'Arimo', sans-serif;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        .btn-evidence:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        /* ---- Polish pass: depth, hover transitions, radius refinements ---- */
+
+        /* Container + structural panels */
+        .container { border-radius: 10px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+        .setup-section { border-radius: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.04); }
+        .consultant-note { border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+        .p1-verify-panel { border-radius: 8px; }
+        .p1-hybrid-panel { border-radius: 0 8px 8px 0; }
+        #followup-interview-panel { border-radius: 10px; box-shadow: 0 4px 18px rgba(21,149,145,0.1); }
+
+        /* Dimension cards: hover lift */
+        .p1-dim-card {
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            transition: box-shadow 0.18s ease, transform 0.18s ease;
+        }
+        .p1-dim-card:hover {
+            box-shadow: 0 5px 16px rgba(0,0,0,0.11);
+            transform: translateY(-2px);
+        }
+
+        /* Score matrix items */
+        .matrix-item {
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            transition: box-shadow 0.18s ease, transform 0.18s ease;
+        }
+        .matrix-item:hover {
+            box-shadow: 0 4px 14px rgba(0,0,0,0.09);
+            transform: translateY(-1px);
+        }
+
+        /* Section checkboxes */
+        .checkbox-item {
+            border-radius: 6px;
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+        .checkbox-item:hover {
+            border-color: var(--primary);
+            background: rgba(21,149,145,0.04);
+        }
+
+        /* Primary submit button */
+        .btn-submit {
+            border-radius: 6px;
+            transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn-submit:hover {
+            background: #117a77;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(21,149,145,0.28);
+        }
+
+        /* Follow-up / action buttons */
+        .btn-followup {
+            border-radius: 6px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+        }
+        .btn-followup:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(21,149,145,0.3);
+            opacity: 1;
+        }
+
+        /* Send / skip interview buttons */
+        .btn-iv-send { border-radius: 6px; transition: background 0.15s ease, transform 0.15s ease; }
+        .btn-iv-send:hover { background: #117a77; transform: translateY(-1px); }
+        .btn-iv-skip { border-radius: 6px; transition: border-color 0.15s ease, background 0.15s ease; }
+        .btn-iv-skip:hover { border-color: var(--primary); background: rgba(21,149,145,0.06); }
+
+        /* Copy / ghost buttons */
+        .btn-copy-json { border-radius: 6px; transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease, border-color 0.15s ease; }
+        .btn-copy-json:hover { transform: translateY(-1px); }
+        .btn-ghost { border-radius: 6px; transition: border-color 0.15s ease, background 0.15s ease; }
+        .btn-ghost:hover { border-color: var(--primary); }
+        .btn-small { border-radius: 6px; transition: opacity 0.15s ease, transform 0.15s ease; }
+        .btn-small:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        /* Input focus: teal ring */
+        .name-input:focus, textarea:focus, #interview-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(21,149,145,0.14);
+        }
+
+        /* Context bar in new position (above input, not above chat) */
+        .interview-context-bar {
+            font-size: 0.78em;
+            padding: 6px 20px;
+            border-bottom: none;
+            border-top: 1px solid rgba(192,57,43,0.15);
+            background: rgba(192,57,43,0.04);
+            color: #b03020;
+            border-radius: 0;
+        }
+        body.consultant-mode .interview-context-bar { color: #ff8080; background: rgba(255,0,60,0.05); border-top-color: rgba(255,0,60,0.15); }
+
+        /* h2 section header slight refinement */
+        h2 { border-radius: 3px; letter-spacing: 0.8px; }
+
+        /* Phase 1 agent results section header */
+        #report-container h3 {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #aaa;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+        body.consultant-mode #report-container h3 { color: #555; border-color: #333; }
+
+        /* Radar chart box: subtle border */
+        .chart-box {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        /* Dark CTA buttons (Analyze, Send Report) */
+        .btn-action-dark {
+            transition: filter 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn-action-dark:hover {
+            filter: brightness(1.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.28);
+        }
+
+        /* Demo persona buttons */
+        .btn-demo-persona {
+            background: transparent;
+            border: 1px solid #d0d0d0;
+            color: #555;
+            padding: 7px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Arimo', sans-serif;
+            font-size: 0.83em;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn-demo-persona:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(21,149,145,0.05);
+            box-shadow: 0 2px 8px rgba(21,149,145,0.12);
+        }
+        body.consultant-mode .btn-demo-persona { border-color: #444; color: #ccc; }
+        body.consultant-mode .btn-demo-persona:hover { border-color: var(--primary); color: var(--primary); }
     </style>
 </head>
 <body>
@@ -851,12 +1149,21 @@
             </div>
         </div>
 
-        <!-- DEMO BUTTON — remove before client delivery -->
-        <div style="margin-top:16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-            <button type="button" onclick="loadDemoData()" style="background:#6c757d; color:#fff; border:none; padding:9px 18px; border-radius:4px; cursor:pointer; font-size:0.88em; font-family:inherit; letter-spacing:0.3px;">
-                &#9654; Load Demo (Max / Cmax)
-            </button>
-            <span style="font-size:0.78em; color:#999;">Original audio not available (NDA) — text justifications included.</span>
+        <!-- DEMO PERSONAS — 3 roles from the same company -->
+        <div style="margin-top:20px;padding:16px 18px;background:rgba(0,0,0,0.02);border:1px solid var(--border);border-left:3px solid rgba(21,149,145,0.35);border-radius:6px;">
+            <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:11px;">
+                <span style="font-size:0.72em;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#159591;">Sample Perspectives</span>
+                <span style="font-size:0.7em;color:#bbb;font-weight:400;">Three roles · Same company (Cmax)</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <button type="button" onclick="loadDemo('techLead')" class="btn-demo-persona">&#9654;&nbsp; Tech Lead</button>
+                <button type="button" onclick="loadDemo('financeRisk')" class="btn-demo-persona">&#9654;&nbsp; Finance &amp; Risk</button>
+                <button type="button" onclick="loadDemo('hrOps')" class="btn-demo-persona">&#9654;&nbsp; HR &amp; Operations</button>
+            </div>
+            <p style="font-size:0.73em;color:#aaa;margin:10px 0 0 0;line-height:1.58;">
+                Select a perspective, then run <strong style="color:#888;">Analyze with AI</strong> to see how maturity signals differ by role — same organization, different vantage points.
+            </p>
+            <div id="demo-loaded-banner" style="display:none;margin-top:8px;font-size:0.78em;color:#159591;font-weight:700;"></div>
         </div>
     </div>
 
@@ -1281,9 +1588,14 @@
         <button type="button" class="btn-submit" onclick="generateReport()">Analyze Maturity</button>
 
         <!-- NEW: Phase 1 backend analysis button -->
-        <button type="button" class="btn-submit" onclick="runPhase1AgentAnalysis()" style="background:#222;">
+        <button type="button" class="btn-submit btn-action-dark" onclick="runPhase1AgentAnalysis()" style="background:#222;">
             Analyze with AI (Phase 1)
         </button>
+        <p id="new-submission-warning" style="display:none;font-size:0.78em;color:#c0392b;margin:6px 0 0 0;line-height:1.5;">
+            &#9888; Running Phase 1 again creates a <strong>new submission</strong> and replaces the current view.
+            To refine the current result, use the follow-up interview or Auto-Simulate instead.&nbsp;&nbsp;
+            <a href="#" onclick="startNewSubmission(); return false;" style="color:#c0392b;font-weight:700;text-decoration:underline;">&#8635; Start New Phase 1 Submission</a>
+        </p>
     </form>
 
     <!-- =========================
@@ -1298,15 +1610,11 @@
                 <canvas id="spiderChart"></canvas>
             </div>
 
-            <div class="score-matrix" id="score-matrix"></div>
+            <div class="score-matrix" id="score-matrix" style="display:none;"></div>
 
-            <div class="ai-analyst-box" id="ai-output">
-                <h3 id="analyst-header">Strategic Analyst Conclusion</h3>
-                <div id="ai-insight-text"></div>
-            </div>
-
-            <h3 style="margin-top:40px;">Qualitative Response Briefing</h3>
-            <div id="qualitative-results"></div>
+            <!-- Strategic Analyst Conclusion + Qualitative Briefing: populated by JS but hidden from view -->
+            <div id="ai-output" style="display:none;"><div id="ai-insight-text"></div></div>
+            <div id="qualitative-results" style="display:none;"></div>
 
             <!-- Phase 1 agent results from backend -->
             <h3 style="margin-top:40px;">Phase 1 Agent Analysis</h3>
@@ -1314,7 +1622,7 @@
                 Run "Analyze with AI (Phase 1)" to get the full diagnostic report.
             </div>
 
-            <button class="btn-submit" onclick="alert('Secure Link Initialized: Data bundle ready for SharePoint Vault archiving. (Pending Authentication)')" style="margin-top:40px; background-color: #444;">
+            <button class="btn-submit btn-action-dark" onclick="alert('Consultant handoff bundle prepared locally.\n\nExternal delivery is not enabled in this build.\nShare the backend JSON or use \u201cCopy Backend JSON\u201d to pass results to your consultant.')" style="margin-top:40px; background-color: #444;">
                 Send Report to AHI
             </button>
         </div>
@@ -1329,9 +1637,9 @@
             </div>
             <div class="interview-progress-label" id="interview-progress-label">0 of 0</div>
         </div>
-        <div class="interview-context-bar" id="interview-context-bar" style="display:none;"></div>
         <div class="interview-chat" id="interview-chat"></div>
         <div class="interview-input-area" id="interview-input-area">
+            <div class="interview-context-bar" id="interview-context-bar" style="display:none;"></div>
             <div class="interview-input-row">
                 <textarea id="interview-input"
                     placeholder="Type your response... (Shift+Enter for new line, Enter to send)"
@@ -1344,20 +1652,26 @@
         </div>
         <div class="interview-complete-box" id="interview-complete-box" style="display:none;">
             <p style="font-weight:700; margin-bottom:6px;">Interview Complete</p>
-            <p style="font-size:0.88em; color:#888; margin-bottom:12px;">All flagged areas have been addressed. The session data is ready for your consultant.</p>
+            <p id="refreshed-status" style="font-size:0.88em; color:#888; margin-bottom:12px;">Updating analysis with follow-up responses…</p>
+            <div id="refreshed-analysis-box" style="display:none;"></div>
             <button class="btn-copy-json" onclick="copyInterviewPayload()">Copy Session Payload</button>
         </div>
     </div>
 
-    <!-- Admin / consultant mode -->
-    <div class="portal-zone">
-        <button class="btn-portal-trigger" id="portal-trigger" onclick="unlockConsultantMode()">Unlock AHI Consultant Dashboard</button>
-        <div id="portal-controls">
-            <p style="font-weight:bold; text-transform:uppercase;">Admin Access Active: Pro Functions Unlocked</p>
-            <button class="btn-admin" onclick="downloadCSV()">Export Strategic CSV</button>
-            <button class="btn-admin" onclick="copyLLMPrompt()">Copy for AI Analysis</button>
-            <button class="btn-admin" onclick="location.reload()">Reset App</button>
+    <!-- Trust Evidence Drawer -->
+    <div id="trust-drawer">
+        <div class="trust-drawer-header">
+            <strong>Evidence Details</strong>
+            <button class="btn-trust-close" onclick="closeTrustDrawer()">✕ Close</button>
         </div>
+        <div id="trust-drawer-content"></div>
+    </div>
+
+    <!-- Consultant mode: unlocked via keyboard shortcut only (portal-zone removed from UI) -->
+    <div id="portal-controls" style="display:none;">
+        <button class="btn-admin" onclick="downloadCSV()">Export Strategic CSV</button>
+        <button class="btn-admin" onclick="copyLLMPrompt()">Copy for AI Analysis</button>
+        <button class="btn-admin" onclick="location.reload()">Reset App</button>
     </div>
 </div>
 
@@ -1596,14 +1910,27 @@ function renderJustificationList(cat) {
         const audioTag = j.audioUrl
             ? (j.transcribed ? `<span style="color:var(--primary);font-weight:700;"> | AUDIO + TRANSCRIBED</span>` : ` | AUDIO`)
             : "";
+        const safeTs = j.ts.replace(/"/g, "&quot;");
         return `
             <div class="justify-item">
-                <div class="justify-meta">${j.tagLabel}${audioTag} | ${time}</div>
+                <div class="justify-item-header">
+                    <div class="justify-meta">${j.tagLabel}${audioTag} | ${time}</div>
+                    <button class="btn-justify-delete" title="Remove this note"
+                        onclick="removeJustification('${safeTs}')">&#10005;</button>
+                </div>
                 ${safeText ? `<div class="justify-body">${safeText}</div>` : `<div class="justify-body"><em>(Voice note — no transcript)</em></div>`}
                 ${audioHTML}
             </div>
         `;
     }).join("");
+}
+
+function removeJustification(ts) {
+    const idx = JUSTIFICATIONS.findIndex(j => j.ts === ts);
+    if (idx === -1) return;
+    const cat = JUSTIFICATIONS[idx].cat;
+    JUSTIFICATIONS.splice(idx, 1);
+    renderJustificationList(cat);
 }
 
 /* Helpers used in report / export */
@@ -1908,7 +2235,13 @@ function collectPhase1Payload() {
     };
 }
 
-let _lastPhase1JSON = null; // stored for "Copy JSON" button
+let _lastPhase1JSON        = null; // stored for "Copy JSON" button
+let _lastSubmissionId      = null; // explicit submission_id from last backend analysis (for reanalysis)
+let _lastPhase1PerQuestion = {};   // { question_id: perQuestionResult } for trust panel
+let _lastRefreshedJSON     = null; // refreshed analysis after follow-up
+let _resolvedQuestionIds   = new Set(); // question_ids addressed in last interview
+let _isRefreshedView       = false;     // true when main panel shows post-follow-up reanalysis
+let _simLastStyle          = null;      // last simulation style used (null = not simulated)
 
 async function runPhase1AgentAnalysis() {
     // Always generate the local report first so user sees scores immediately
@@ -1924,6 +2257,17 @@ async function runPhase1AgentAnalysis() {
     if (scoredQuestions.length === 0) {
         box.innerHTML = "<p><strong>No scored questions found.</strong> Select sections and answer at least one Likert question before running Phase 1 analysis.</p>";
         return;
+    }
+
+    // Guard: if a refreshed/simulated result exists, confirm before overwriting
+    if (_isRefreshedView && _lastSubmissionId) {
+        const proceed = confirm(
+            "⚠ Running Phase 1 again will create a NEW submission and replace the current view.\n\n" +
+            `Current submission: ${_lastSubmissionId.slice(0, 8)}…\n\n` +
+            "To refine the existing result, cancel and use the follow-up interview or Auto-Simulate instead.\n\n" +
+            "Continue and create a new submission?"
+        );
+        if (!proceed) return;
     }
 
     // Show loading overlay
@@ -1943,7 +2287,14 @@ async function runPhase1AgentAnalysis() {
 
         const data = await res.json();
         _lastPhase1JSON = data;
+        if (data.submission_id) _lastSubmissionId = data.submission_id; // explicit cache
+        _isRefreshedView = false;
+        _simLastStyle    = null;
+        _resolvedQuestionIds = new Set();
         renderPhase1AgentResults(data);
+        // Show "creates new submission" warning now that an active submission exists
+        const _warnEl = document.getElementById("new-submission-warning");
+        if (_warnEl) _warnEl.style.display = "";
         document.getElementById("report-container").scrollIntoView({ behavior: "smooth" });
 
     } catch (err) {
@@ -1964,8 +2315,9 @@ function copyPhase1JSON() {
         alert("No Phase 1 result to copy yet. Run the analysis first.");
         return;
     }
+    const label = _isRefreshedView ? "Refreshed analysis (post-follow-up)" : "Original Phase 1 analysis";
     navigator.clipboard.writeText(JSON.stringify(_lastPhase1JSON, null, 2))
-        .then(() => alert("Backend JSON copied to clipboard."))
+        .then(() => alert(`${label} copied to clipboard.`))
         .catch(() => alert("Copy failed — see browser console for raw JSON."));
 }
 
@@ -1994,15 +2346,45 @@ function renderPhase1AgentResults(data) {
     const nextActions = data.next_best_actions || [];
     const hybrid      = data.hybrid_analyst || null;
 
+    // Cache per-question data for trust panel
+    _lastPhase1PerQuestion = {};
+    perQuestion.forEach(q => { _lastPhase1PerQuestion[q.question_id] = q; });
+
+    // Prominent submission status bar
+    const _subIdFull  = _lastSubmissionId || (data.submission_id || "");
+    const _subIdShort = _subIdFull ? _subIdFull.slice(0, 12) + "\u2026" : "\u2014";
+    const _evCount    = perQuestion.filter(q => q.evidence_id).length;
+    const _viewLabel  = _isRefreshedView
+        ? (_simLastStyle ? `SIMULATED \u2014 ${_simLastStyle.replace("_", " ")}` : "REFRESHED")
+        : "ORIGINAL";
+    const _barColor   = _isRefreshedView ? "#159591" : "#666";
+    const _barBg      = _isRefreshedView ? "rgba(21,149,145,0.07)" : "#f7f7f7";
+    const _barBorder  = _isRefreshedView ? "1px solid rgba(21,149,145,0.3)" : "1px solid #e5e5e5";
+    const debugBarHTML = `<div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:0.8em;color:${_barColor};background:${_barBg};padding:8px 12px;border-radius:5px;margin-bottom:16px;border:${_barBorder};">
+        <span style="font-weight:700;text-transform:uppercase;letter-spacing:0.6px;font-family:monospace;">${_viewLabel}</span>
+        <span style="color:#bbb;">|</span>
+        <span style="font-family:monospace;">Sub: <strong style="color:${_barColor}">${_subIdShort}</strong></span>
+        <span style="color:#bbb;">|</span>
+        <span>Evidence: ${_evCount}/${perQuestion.length}</span>
+        ${_isRefreshedView ? `<span style="color:#bbb;">|</span><span>Resolved: <strong>${_resolvedQuestionIds.size}</strong></span>` : ""}
+        <span style="margin-left:auto;"><a href="#" onclick="startNewSubmission(); return false;" style="color:#c0392b;font-family:sans-serif;font-size:0.9em;font-weight:600;text-decoration:none;">&#8635; Start New Phase&nbsp;1 Submission</a></span>
+    </div>`;
+
     /* Dimension cards */
     const dimCards = dimensions.map(d => {
+        const isUnscored = (d.avg_score === null || d.avg_score === undefined);
+        if (isUnscored) {
+            return `<div class="p1-dim-card" style="opacity:0.45;border-style:dashed;">
+                <div class="p1-dim-title" style="color:#888;">${d.category}</div>
+                <div style="font-size:0.8em;color:#aaa;margin-top:8px;font-style:italic;">Not assessed for this persona</div>
+            </div>`;
+        }
         const flagHTML = d.summary_flags && d.summary_flags.length
             ? d.summary_flags.map(f => `<div class="p1-dim-flag">&#9888; ${f}</div>`).join("")
             : "";
-        const scoreDisp = (d.avg_score !== null && d.avg_score !== undefined) ? d.avg_score.toFixed(1) : "—";
         return `<div class="p1-dim-card">
             <div class="p1-dim-title">${d.category} ${confBadge(d.confidence_label)}</div>
-            <div class="p1-dim-score">${scoreDisp}<span style="font-size:0.45em;font-weight:400;color:#888;">/5</span></div>
+            <div class="p1-dim-score">${d.avg_score.toFixed(1)}<span style="font-size:0.45em;font-weight:400;color:#888;">/5</span></div>
             <div style="font-size:0.8em;color:#888;margin-top:4px;">${d.question_count} question(s)</div>
             ${flagHTML}
         </div>`;
@@ -2015,7 +2397,9 @@ function renderPhase1AgentResults(data) {
     const verifyHTML = flaggedQs.length
         ? `<div class="p1-verify-panel"><div class="p1-verify-title">&#9888; Verification Required &mdash; ${flaggedQs.length} Item(s)</div>
             ${flaggedQs.map(q => `<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(192,57,43,0.2);">
-                <strong>${q.question_id} &mdash; ${q.label}</strong> ${confBadge(q.confidence_label)} ${evBadge(q.evidence_strength_label)}<br>
+                <strong>${q.question_id} &mdash; ${q.label}</strong>
+                ${confBadge(q.confidence_label)} ${evBadge(q.evidence_strength_label)}
+                <button class="btn-evidence" onclick="openTrustDrawer('${q.question_id}')">Evidence &#9656;</button><br>
                 <span style="font-size:0.85em;">Score: ${q.self_score || "—"}/5 | Stage: ${q.inferred_stage}</span>
                 ${q.red_flags && q.red_flags.length ? `<div style="margin-top:6px;font-size:0.82em;color:#c0392b;">${q.red_flags.map(f => `<div>&#9679; ${f}</div>`).join("")}</div>` : ""}
                 ${q.recommended_followups && q.recommended_followups.length ? `<div style="margin-top:8px;font-size:0.82em;background:rgba(0,0,0,0.03);padding:8px;border-radius:4px;"><strong>Consultant Probe:</strong>${q.recommended_followups.map(p => `<div style="margin-top:4px;">&#8227; ${p}</div>`).join("")}</div>` : ""}
@@ -2051,6 +2435,7 @@ function renderPhase1AgentResults(data) {
     const dimHTML = ""; /* kept to avoid reference error below — not used */
 
     box.innerHTML = `<div>
+        ${debugBarHTML}
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
             <span style="font-size:1.4em;font-weight:800;">Composite: ${overall.composite_score ?? "—"}</span>
             <span style="font-weight:700;color:#888;">${overall.maturity_stage || ""}</span>
@@ -2076,7 +2461,17 @@ function renderPhase1AgentResults(data) {
         ${hybridHTML}
         <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:16px;">
             <button class="btn-copy-json" onclick="copyPhase1JSON()">Copy Backend JSON</button>
-            ${overall.needs_human_followup ? `<button class="btn-followup" onclick="startFollowupInterview()">Start Follow-up Interview <span class="fq-count" id="fq-count-badge">...</span></button>` : ""}
+            ${overall.needs_human_followup ? `<button class="btn-followup" onclick="startFollowupInterview()">Start Follow-up Interview <span class="fq-count" id="fq-count-badge">...</span></button>
+            <span id="sim-panel" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82em;">
+                <select id="sim-style-select" style="font-size:0.88em;padding:3px 6px;border:1px solid #ccc;border-radius:4px;background:var(--card);color:var(--text);">
+                    <option value="strong_specific">Sim: Specific</option>
+                    <option value="vague">Sim: Vague</option>
+                    <option value="contradictory">Sim: Contradictory</option>
+                    <option value="executive">Sim: Executive</option>
+                    <option value="technical">Sim: Technical</option>
+                </select>
+                <button class="btn-copy-json" onclick="simulateFollowup()" style="padding:4px 10px;font-size:0.88em;">Auto-Simulate</button>
+            </span>` : ""}
         </div>
     </div>`;
 
@@ -2169,9 +2564,20 @@ async function startFollowupInterview() {
         const session = await res.json();
         _interviewSessionId = session.session_id;
 
-        /* Show opening line only (not the first question — we control that below) */
-        const opening = (session.opening_text || "").split("\n\n")[0];
-        if (opening) renderInterviewMessage("assistant", opening);
+        /* opening_text = "{greeting}\n\n{first_question_probe}"
+           Use both parts so the backend drives what the user sees, not the local queue. */
+        const _parts = (session.opening_text || "").split("\n\n");
+        if (_parts[0]) renderInterviewMessage("assistant", _parts[0]); // greeting
+        if (_parts[1]) {
+            // First question text from backend (probe_override) — render it and
+            // update progress/context without re-rendering via showCurrentInterviewQuestion.
+            renderInterviewMessage("assistant", _parts.slice(1).join("\n\n"));
+            updateInterviewProgress();
+            showInterviewContext(_interviewQueue[0] || null);
+            document.getElementById("interview-input")?.focus();
+        } else {
+            showCurrentInterviewQuestion(); // fallback: no first question in opening
+        }
 
     } catch (err) {
         renderInterviewMessage("assistant", "Could not start interview session. Ensure the backend is running at " + CONFIG.PHASE1_API_BASE);
@@ -2179,12 +2585,11 @@ async function startFollowupInterview() {
         return;
     }
 
-    showCurrentInterviewQuestion();
 }
 
 function showCurrentInterviewQuestion() {
     if (_interviewIdx >= _interviewQueue.length) {
-        finalizeInterview(null);
+        reanalyzeAfterInterview(null); // async fire-and-forget
         return;
     }
     const item = _interviewQueue[_interviewIdx];
@@ -2200,10 +2605,10 @@ function showInterviewContext(item) {
         bar.style.display = "none";
         return;
     }
-    const priorityLabel = { critical: "CRITICAL", high: "High Priority", medium: "Medium Priority" }[item.priority] || item.priority;
-    const priorScore    = item.prior_score != null ? ` | Score: ${item.prior_score}/5` : "";
+    const priorityLabel = { critical: "Critical", high: "High", medium: "Medium" }[item.priority] || item.priority;
+    const priorScore    = item.prior_score != null ? ` · Score ${item.prior_score}/5` : "";
     bar.style.display   = "block";
-    bar.innerHTML = `<strong>[${priorityLabel}]</strong> ${item.label}${priorScore} &mdash; <em>${item.reason[0] || ""}</em>`;
+    bar.innerHTML = `<span style="opacity:0.65;">Answering:</span> <strong>${item.label}</strong>${priorScore} <span style="opacity:0.65;">[${priorityLabel}]</span>`;
 }
 
 function updateInterviewProgress() {
@@ -2241,12 +2646,47 @@ async function sendInterviewResponse() {
             });
             if (res.ok) {
                 const turn = await res.json();
-                if (turn.is_complete) { finalizeInterview(turn.compiled_payload); return; }
+                if (turn.is_complete) {
+                    /* RC-5: if backend already ran reanalysis, apply it directly */
+                    if (turn.refreshed_analysis) {
+                        finalizeInterview(turn.compiled_payload);
+                        const _orig      = _lastPhase1JSON;
+                        _isRefreshedView = true;
+                        _lastPhase1JSON  = turn.refreshed_analysis;
+                        _lastRefreshedJSON = turn.refreshed_analysis;
+                        if (turn.refreshed_analysis.submission_id) _lastSubmissionId = turn.refreshed_analysis.submission_id;
+                        renderPhase1AgentResults(turn.refreshed_analysis);
+                        const _resEl = document.getElementById("phase1-agent-results");
+                        if (_resEl) _resEl.scrollIntoView({ behavior: "smooth", block: "start" });
+                        const _bEl = document.getElementById("refreshed-analysis-box");
+                        const _sEl = document.getElementById("refreshed-status");
+                        if (_bEl) { _bEl.style.display = "block"; renderRefreshedAnalysis(_orig, turn.refreshed_analysis); }
+                        if (_sEl) { _sEl.textContent = "\u2713 Report updated (from session)."; _sEl.style.color = "#159591"; _sEl.style.display = ""; }
+                    } else {
+                        await reanalyzeAfterInterview(turn.compiled_payload);
+                    }
+                    return;
+                }
+
+                /* Non-terminal: surface backend-generated text and advance state correctly.
+                   CLARIFY → stay on current question; ASK → advance to next question.
+                   If backend is unreachable the try/catch falls through to the queue fallback. */
+                if (turn.assistant_text) {
+                    renderInterviewMessage("assistant", turn.assistant_text);
+                }
+                if (turn.state === "ASK") {
+                    _interviewIdx++;
+                }
+                /* else CLARIFY / PROBE → _interviewIdx unchanged, user stays on same question */
+                updateInterviewProgress();
+                showInterviewContext(_interviewQueue[_interviewIdx] || null);
+                document.getElementById("interview-input")?.focus();
+                return; // do not fall through to frontend-only queue logic
             }
         } catch (e) { /* non-fatal — continue frontend flow */ }
     }
 
-    /* Advance frontend queue */
+    /* Advance frontend queue — fallback when backend session is unavailable */
     _interviewIdx++;
     if (_interviewIdx < _interviewQueue.length) {
         showCurrentInterviewQuestion();
@@ -2259,10 +2699,30 @@ async function sendInterviewResponse() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ session_id: _interviewSessionId, user_text: "done" })
                 });
-                if (res.ok) { const t = await res.json(); finalizeInterview(t.compiled_payload); return; }
+                if (res.ok) {
+                    const t = await res.json();
+                    if (t.refreshed_analysis) {
+                        /* Same RC-5 fast path */
+                        finalizeInterview(t.compiled_payload);
+                        const _orig2      = _lastPhase1JSON;
+                        _isRefreshedView  = true;
+                        _lastPhase1JSON   = t.refreshed_analysis;
+                        _lastRefreshedJSON = t.refreshed_analysis;
+                        if (t.refreshed_analysis.submission_id) _lastSubmissionId = t.refreshed_analysis.submission_id;
+                        renderPhase1AgentResults(t.refreshed_analysis);
+                        const _resEl2 = document.getElementById("phase1-agent-results");
+                        if (_resEl2) _resEl2.scrollIntoView({ behavior: "smooth", block: "start" });
+                        const _bEl2 = document.getElementById("refreshed-analysis-box");
+                        const _sEl2 = document.getElementById("refreshed-status");
+                        if (_bEl2) { _bEl2.style.display = "block"; renderRefreshedAnalysis(_orig2, t.refreshed_analysis); }
+                        if (_sEl2) { _sEl2.textContent = "\u2713 Report updated (from session)."; _sEl2.style.color = "#159591"; _sEl2.style.display = ""; }
+                        return;
+                    }
+                    await reanalyzeAfterInterview(t.compiled_payload); return;
+                }
             } catch (e) { /* ignore */ }
         }
-        finalizeInterview(null);
+        await reanalyzeAfterInterview(null);
     }
 }
 
@@ -2281,7 +2741,7 @@ async function skipInterviewQuestion() {
     if (_interviewIdx < _interviewQueue.length) {
         showCurrentInterviewQuestion();
     } else {
-        finalizeInterview(null);
+        await reanalyzeAfterInterview(null);
     }
 }
 
@@ -2295,6 +2755,9 @@ function finalizeInterview(compiledPayload) {
     document.getElementById("interview-input-area").style.display = "none";
     document.getElementById("interview-complete-box").style.display = "block";
 
+    const statusEl = document.getElementById("refreshed-status");
+    if (statusEl) statusEl.style.display = "none"; // hidden until reanalyze runs
+
     const n = _interviewQueue.length;
     renderInterviewMessage("assistant",
         `Thank you — all ${n} flagged item${n !== 1 ? "s" : ""} have been addressed. ` +
@@ -2303,80 +2766,583 @@ function finalizeInterview(compiledPayload) {
 }
 
 function copyInterviewPayload() {
-    const data = _interviewPayload || { note: "No compiled session payload available." };
+    const data = _interviewPayload || _lastRefreshedJSON || _lastPhase1JSON
+        || { note: "No data available — run Phase 1 analysis first." };
+    const label = _interviewPayload     ? "Session payload"
+                : _lastRefreshedJSON    ? "Refreshed analysis"
+                : _lastPhase1JSON       ? "Phase 1 analysis"
+                :                        "empty";
     navigator.clipboard.writeText(JSON.stringify(data, null, 2))
-        .then(()  => alert("Session payload copied to clipboard."))
+        .then(()  => alert(`${label} copied to clipboard.`))
         .catch(()  => alert("Copy failed — see browser console."));
 }
 
 /* =========================================================
-   Load Demo — Max / Cmax (remove before client delivery)
+   Post-interview reanalysis + refreshed result rendering
 ========================================================= */
-function loadDemoData() {
-    // Identity
-    document.getElementById("userName").value       = "Max";
-    document.getElementById("orgName").value        = "Cmax";
-    document.getElementById("respondentRole").value = "Tech Lead";
-    document.getElementById("orgUnit").value        = "";
 
-    // Sections — check all four
+async function reanalyzeAfterInterview(compiledPayload) {
+    /* Always finalize the UI first (shows complete box, hides input) */
+    finalizeInterview(compiledPayload);
+
+    /* Prefer the explicitly-cached ID; fall back to the full response object */
+    const submissionId = _lastSubmissionId || (_lastPhase1JSON && _lastPhase1JSON.submission_id);
+    const statusEl     = document.getElementById("refreshed-status");
+    const boxEl        = document.getElementById("refreshed-analysis-box");
+
+    if (!submissionId) {
+        /* No submission_id: Phase 1 ran on an older server version, or hasn't been run yet.
+           If we have the full per_question base from _lastPhase1JSON, reconstruct a complete
+           payload merging the follow-up answers and call Phase 1 directly.
+           This ensures evidence_id is generated and the trust drawer is updated. */
+        const _basePerQ = (_lastPhase1JSON && _lastPhase1JSON.per_question) || [];
+        if (_basePerQ.length > 0) {
+            /* Build answer patch from compiledPayload */
+            const _answerPatch = {};
+            if (compiledPayload && Array.isArray(compiledPayload.questions)) {
+                compiledPayload.questions.forEach(q => {
+                    if (q.typed_response && q.typed_response.trim()) {
+                        _answerPatch[q.question_id] = q.typed_response;
+                    }
+                });
+            }
+            answers.forEach(a => { if (a.text_response) _answerPatch[a.question_id] = a.text_response; });
+
+            const _fullPayload = {
+                payload_version:   "1.0",
+                respondent_name:   (_lastPhase1JSON.respondent_name) || (compiledPayload && compiledPayload.respondent_name) || "Unknown",
+                organization_name: (_lastPhase1JSON.organization_name) || (compiledPayload && compiledPayload.organization_name) || "Unknown",
+                respondent_role:   (compiledPayload && compiledPayload.respondent_role) || null,
+                organization_unit: (compiledPayload && compiledPayload.organization_unit) || null,
+                selected_sections: (compiledPayload && compiledPayload.selected_sections) || [],
+                questions: _basePerQ.map(pq => ({
+                    question_id:    pq.question_id,
+                    category:       pq.category,
+                    label:          pq.label,
+                    prompt:         pq.label, // analyzer uses label for probes; prompt is display-only
+                    score:          pq.self_score !== undefined ? pq.self_score : null,
+                    typed_response: _answerPatch[pq.question_id] || null,
+                })),
+                justifications: [],
+            };
+
+            if (statusEl) { statusEl.textContent = "Refreshing analysis with follow-up responses\u2026"; statusEl.style.display = ""; }
+            try {
+                const _res2 = await fetch(
+                    `${CONFIG.PHASE1_API_BASE}/api/analyze-assessment`,
+                    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(_fullPayload) }
+                );
+                if (!_res2.ok) throw new Error(`HTTP\u00a0${_res2.status}`);
+                const _refreshed2 = await _res2.json();
+
+                _lastRefreshedJSON = _refreshed2;
+                answers.forEach(a => { if (a.question_id) _resolvedQuestionIds.add(a.question_id); });
+
+                const _orig2         = _lastPhase1JSON;
+                _isRefreshedView     = true;
+                _lastPhase1JSON      = _refreshed2;
+                if (_refreshed2.submission_id) _lastSubmissionId = _refreshed2.submission_id;
+                renderPhase1AgentResults(_refreshed2);
+
+                const _resEl2 = document.getElementById("phase1-agent-results");
+                if (_resEl2) _resEl2.scrollIntoView({ behavior: "smooth", block: "start" });
+
+                if (statusEl) {
+                    statusEl.textContent = "\u2713 Analysis refreshed with follow-up responses.";
+                    statusEl.style.color  = "#159591";
+                    statusEl.style.display = "";
+                }
+                if (boxEl) { boxEl.style.display = "block"; renderRefreshedAnalysis(_orig2, _refreshed2); }
+            } catch (_err2) {
+                if (statusEl) statusEl.textContent = "Could not refresh analysis. Re-run \u201cAnalyze with AI (Phase\u00a01)\u201d first.";
+                console.error("[AHI] fallback p1 reanalysis error:", _err2);
+            }
+            return;
+        }
+
+        /* No base data at all */
+        if (statusEl) {
+            statusEl.textContent = "Run \u201cAnalyze with AI (Phase\u00a01)\u201d first to enable reanalysis.";
+            statusEl.style.display = "";
+        }
+        return;
+    }
+
+    /* Build answers array from compiledPayload.
+       Phase 2 compiled_payload is an AssessmentPayload-format dict with a questions[] array.
+       Previous code incorrectly used Object.entries() on the whole dict, extracting
+       metadata keys (payload_version, respondent_name, etc.) instead of actual answers. */
+    let answers = [];
+    if (compiledPayload && typeof compiledPayload === "object") {
+        if (Array.isArray(compiledPayload.questions)) {
+            /* Phase 2 shape: { questions: [{question_id, typed_response, ...}], ... } */
+            answers = compiledPayload.questions
+                .filter(q => q.typed_response && typeof q.typed_response === "string" && q.typed_response.trim())
+                .map(q => ({ question_id: q.question_id, text_response: q.typed_response }));
+        }
+        /* If questions array produced nothing, try legacy flat shape {question_id: text} */
+        if (answers.length === 0) {
+            const _META = new Set(["payload_version","respondent_name","organization_name",
+                "respondent_role","organization_unit","source_mode","session_id"]);
+            answers = Object.entries(compiledPayload)
+                .filter(([k, v]) => !_META.has(k) && typeof v === "string" && v.trim())
+                .map(([question_id, text_response]) => ({ question_id, text_response }));
+        }
+    }
+    /* Last fallback: queue question_ids with no text (signals reanalysis with original scores only) */
+    if (answers.length === 0 && _interviewQueue.length > 0) {
+        answers = _interviewQueue.map(item => ({ question_id: item.question_id, text_response: null }));
+    }
+
+    if (statusEl) { statusEl.textContent = "Updating analysis with follow-up responses…"; statusEl.style.display = ""; }
+
+    try {
+        const res = await fetch(
+            `${CONFIG.PHASE1_API_BASE}/api/submissions/${submissionId}/reanalyze`,
+            {
+                method:  "POST",
+                headers: { "Content-Type": "application/json" },
+                body:    JSON.stringify({ answers })
+            }
+        );
+
+        if (!res.ok) {
+            const errText = await res.text();
+            if (res.status === 404) {
+                if (statusEl) statusEl.textContent = "Submission not found in database — DB may not have persisted. Re-run \u201cAnalyze with AI\u201d to create a new record.";
+            } else {
+                if (statusEl) statusEl.textContent = `Reanalysis unavailable (HTTP\u00a0${res.status}).`;
+            }
+            console.warn("[AHI] reanalyze failed:", res.status, errText);
+            return;
+        }
+
+        const refreshed = await res.json();
+        _lastRefreshedJSON = refreshed;
+
+        /* Track resolved question IDs */
+        answers.forEach(a => { if (a.question_id) _resolvedQuestionIds.add(a.question_id); });
+
+        /* RC-2: Promote refreshed result as the new primary report */
+        const originalForDelta  = _lastPhase1JSON; // capture before overwrite for delta panel
+        _isRefreshedView        = true;
+        _lastPhase1JSON         = refreshed;
+        if (refreshed.submission_id) _lastSubmissionId = refreshed.submission_id;
+        renderPhase1AgentResults(refreshed);
+
+        /* Scroll up to the refreshed report */
+        const resultsEl = document.getElementById("phase1-agent-results");
+        if (resultsEl) resultsEl.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        if (statusEl) {
+            statusEl.textContent = "\u2713 Report updated \u2014 scroll up to see refreshed analysis.";
+            statusEl.style.color = "#159591";
+            statusEl.style.display = "";
+        }
+        if (boxEl) { boxEl.style.display = "block"; renderRefreshedAnalysis(originalForDelta, refreshed); }
+
+    } catch (err) {
+        if (statusEl) statusEl.textContent = "Could not reach backend for reanalysis.";
+        console.error("[AHI] reanalyze error:", err);
+    }
+}
+
+/* =========================================================
+   FOLLOW-UP SIMULATION HARNESS
+========================================================= */
+async function simulateFollowup() {
+    const submissionId = _lastSubmissionId || (_lastPhase1JSON && _lastPhase1JSON.submission_id);
+    if (!submissionId) {
+        alert("No submission found. Run \"Analyze with AI (Phase 1)\" first.");
+        return;
+    }
+
+    const styleEl = document.getElementById("sim-style-select");
+    const style = styleEl ? styleEl.value : "strong_specific";
+
+    const statusEl = document.getElementById("refreshed-status");
+    const boxEl    = document.getElementById("refreshed-analysis-box");
+    if (statusEl) { statusEl.textContent = `Running ${style} simulation…`; statusEl.style.color = "#888"; statusEl.style.display = ""; }
+
+    try {
+        const resp = await fetch("/api/simulate-followup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ submission_id: submissionId, style }),
+        });
+        if (!resp.ok) {
+            const errData = await resp.json().catch(() => ({}));
+            if (statusEl) statusEl.textContent = `Simulation failed: ${errData.detail || resp.status}`;
+            return;
+        }
+        const data = await resp.json();
+        const refreshed = data.refreshed_analysis;
+        if (!refreshed) { if (statusEl) statusEl.textContent = "No refreshed result returned."; return; }
+
+        // Capture before-state for summary
+        const _origJSON     = _lastPhase1JSON;
+        const _origFQ       = (_origJSON && _origJSON.followup_queue   || []).length;
+        const _origLowConf  = (_origJSON && _origJSON.per_question      || []).filter(q => q.confidence_label === "Low").length;
+        const _newFQ        = (refreshed.followup_queue  || []).length;
+        const _newLowConf   = (refreshed.per_question    || []).filter(q => q.confidence_label === "Low").length;
+        const _fqDelta      = _origFQ - _newFQ;
+        const _lcDelta      = _origLowConf - _newLowConf;
+
+        // Mark simulated question IDs as resolved for the trust drawer
+        (data.simulated_qids || []).forEach(qid => _resolvedQuestionIds.add(qid));
+
+        // Promote refreshed result as the primary view
+        _lastRefreshedJSON = refreshed;
+        _isRefreshedView   = true;
+        _simLastStyle      = style;
+        _lastPhase1JSON    = refreshed;
+        if (refreshed.submission_id) _lastSubmissionId = refreshed.submission_id;
+
+        // Render updated main report panel (now showing SIMULATED label)
+        renderPhase1AgentResults(refreshed);
+
+        // Scroll to the top of the results section so the user sees the status bar
+        const _reportEl = document.getElementById("phase1-agent-results");
+        if (_reportEl) _reportEl.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        // Rich success banner
+        const _subSnip  = submissionId.slice(0, 8);
+        const _fqNote   = _fqDelta > 0 ? `${_origFQ}\u2192${_newFQ} (\u2212${_fqDelta})` : `${_origFQ}\u2192${_newFQ}`;
+        const _lcNote   = _lcDelta > 0 ? `${_origLowConf}\u2192${_newLowConf} (\u2212${_lcDelta})` : `${_origLowConf}\u2192${_newLowConf}`;
+        const _banner   = `\u2713 Simulation complete \u2014 style: ${style.replace("_", " ")} \u00b7 sub: ${_subSnip}\u2026 \u00b7 ${data.simulated_count} question(s) simulated \u00b7 follow-up items: ${_fqNote} \u00b7 low confidence: ${_lcNote} \u00b7 resolved: ${_resolvedQuestionIds.size}`;
+        if (statusEl) { statusEl.textContent = _banner; statusEl.style.color = "#159591"; statusEl.style.display = ""; }
+
+        if (boxEl) { boxEl.style.display = "block"; renderRefreshedAnalysis(_origJSON, refreshed); }
+
+    } catch (err) {
+        if (statusEl) statusEl.textContent = "Could not reach backend for simulation.";
+        console.error("[AHI] simulate-followup error:", err);
+    }
+}
+
+/* =========================================================
+   START NEW PHASE 1 SUBMISSION  — explicit reset path
+========================================================= */
+function startNewSubmission() {
+    if (_lastSubmissionId || _isRefreshedView) {
+        const msg =
+            "This will clear the current submission state from this browser view.\n" +
+            "The submission remains in the database and can be retrieved by ID.\n\n" +
+            "Continue and start fresh?";
+        if (!confirm(msg)) return;
+    }
+    // Reset all submission state
+    _lastSubmissionId      = null;
+    _lastPhase1JSON        = null;
+    _lastRefreshedJSON     = null;
+    _lastPhase1PerQuestion = {};
+    _resolvedQuestionIds   = new Set();
+    _isRefreshedView       = false;
+    _simLastStyle          = null;
+
+    // Hide post-interview UI
+    const boxEl    = document.getElementById("refreshed-analysis-box");
+    const statusEl = document.getElementById("refreshed-status");
+    const icBox    = document.getElementById("interview-complete-box");
+    if (boxEl)    boxEl.style.display    = "none";
+    if (statusEl) { statusEl.textContent = ""; statusEl.style.display = "none"; }
+    if (icBox)    icBox.style.display    = "none";
+
+    // Reset Phase 1 results panel
+    const resultsEl = document.getElementById("phase1-agent-results");
+    if (resultsEl) resultsEl.innerHTML = 'Run \u201cAnalyze with AI (Phase\u00a01)\u201d to get the full diagnostic report.';
+
+    // Hide the warning (no active submission now)
+    const warnEl = document.getElementById("new-submission-warning");
+    if (warnEl) warnEl.style.display = "none";
+
+    // Scroll back to the assessment form
+    const formEl = document.querySelector(".assessment-form") || document.querySelector("form");
+    if (formEl) formEl.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function renderRefreshedAnalysis(original, refreshed) {
+    const box = document.getElementById("refreshed-analysis-box");
+    if (!box) return;
+
+    const orig    = original  && original.overall;
+    const ref     = refreshed && refreshed.overall;
+    if (!ref) { box.innerHTML = "<p style='color:#888'>No refreshed result available.</p>"; return; }
+
+    const origScore = orig ? orig.composite_score : null;
+    const newScore  = ref.composite_score;
+    const delta     = origScore !== null ? (newScore - origScore).toFixed(1) : null;
+
+    let deltaHtml = "";
+    if (delta !== null) {
+        const d = parseFloat(delta);
+        const cls  = d > 0 ? "delta-up" : d < 0 ? "delta-down" : "delta-same";
+        const sign = d > 0 ? "+" : "";
+        deltaHtml = `<span class="${cls} delta-arrow">${sign}${delta}</span>`;
+    }
+
+    /* Per-question refresh summary */
+    const pqMap = {};
+    (refreshed.per_question || []).forEach(q => { pqMap[q.question_id] = q; });
+
+    let rowsHtml = "";
+    (original && original.per_question || []).forEach(orig_q => {
+        const ref_q = pqMap[orig_q.question_id];
+        if (!ref_q) return;
+        const d = ref_q.inferred_stage - orig_q.inferred_stage;
+        const cls = d > 0 ? "delta-up" : d < 0 ? "delta-down" : "delta-same";
+        const sign = d > 0 ? "▲" : d < 0 ? "▼" : "—";
+        const resolved = _resolvedQuestionIds.has(orig_q.question_id) ? " ✓" : "";
+        rowsHtml += `<div class="refreshed-row">
+            <span class="refreshed-label">${orig_q.question_id}${resolved}</span>
+            <span class="${cls}">${sign} ${orig_q.inferred_stage} → ${ref_q.inferred_stage}</span>
+        </div>`;
+    });
+
+    box.innerHTML = `
+        <div class="refreshed-panel">
+            <div class="refreshed-panel-title">
+                Refreshed Maturity Score: <strong>${newScore}</strong> / 5 ${deltaHtml}
+                &nbsp; Stage: <strong>${ref.maturity_stage}</strong>
+            </div>
+            ${rowsHtml || "<p style='color:#888;font-size:0.85em'>No per-question delta available.</p>"}
+        </div>`;
+}
+
+/* =========================================================
+   Trust Evidence Drawer
+========================================================= */
+
+function openTrustDrawer(questionId) {
+    const pq = _lastPhase1PerQuestion[questionId];
+    if (!pq) return;
+
+    const content = document.getElementById("trust-drawer-content");
+    if (!content) return;
+
+    const resolved = _resolvedQuestionIds.has(questionId) ? "&#10003; Resolved in follow-up" : "Pending";
+
+    const flagsHtml = (pq.red_flags || []).length
+        ? pq.red_flags.map(f => `<div class="trust-flag-item">⚑ ${f}</div>`).join("")
+        : `<div style="color:#888;font-size:0.85em">No red flags.</div>`;
+
+    const excerpt = pq.supporting_text_excerpt
+        ? `<div class="trust-field-text">${pq.supporting_text_excerpt}</div>`
+        : `<div style="color:#888;font-size:0.85em">(no excerpt)</div>`;
+
+    content.innerHTML = `
+        <div class="trust-field-label">Question ID</div>
+        <div class="trust-field-value">${pq.question_id}</div>
+
+        <div class="trust-field-label">Label</div>
+        <div class="trust-field-value">${pq.label || "—"}</div>
+
+        <div class="trust-field-label">Evidence ID</div>
+        <div class="trust-field-value" style="font-family:monospace;font-size:0.8em">${pq.evidence_id || '<span style="color:#aaa;font-style:italic;font-family:sans-serif">not available \u2014 re-run \u201cAnalyze with AI (Phase\u00a01)\u201d to generate</span>'}</div>
+
+        <div class="trust-field-label">Inferred Stage</div>
+        <div class="trust-field-value">${pq.inferred_stage ?? "—"} / 5</div>
+
+        <div class="trust-field-label">Self Score</div>
+        <div class="trust-field-value">${pq.self_score ?? "—"} / 5</div>
+
+        <div class="trust-field-label">Confidence</div>
+        <div class="trust-field-value">${pq.confidence_label || "—"}</div>
+
+        <div class="trust-field-label">Evidence Strength</div>
+        <div class="trust-field-value">${pq.evidence_strength_label || "—"}</div>
+
+        <div class="trust-field-label">Resolution Status</div>
+        <div class="trust-field-value">${resolved}</div>
+
+        <div class="trust-field-label">Red Flags</div>
+        ${flagsHtml}
+
+        <div class="trust-field-label">Supporting Excerpt</div>
+        ${excerpt}
+    `;
+
+    document.getElementById("trust-drawer").classList.add("open");
+}
+
+function closeTrustDrawer() {
+    const drawer = document.getElementById("trust-drawer");
+    if (drawer) drawer.classList.remove("open");
+}
+
+/* =========================================================
+   Demo Personas — 3 roles from Cmax (same company, different perspectives)
+========================================================= */
+const _DEMO_PERSONAS = {
+
+    /* ---- Persona 1: Tech Lead ---- */
+    techLead: {
+        label:   "Tech Lead — Cmax",
+        name:    "Max",
+        org:     "Cmax",
+        role:    "Tech Lead",
+        unit:    "",
+        sections: ["leadership", "tech", "data", "hr"],
+        scores: {
+            L1: 2, L2: 2, L3: 1, L_Risk: 2,
+            W1: 4, W_Conflict: 2, W3: 5,
+            G1: 3, G4: 3, G_Shadow: 2,
+            T1: 4, T2: 3, T4: 4, T5: 5,
+            D1: 2, D2: 3, D3: 2
+        },
+        qualitative: {
+            Q_Decision: "do not invest in AI",
+            Q_Concerns: "Money and hiring new employees",
+            Q_Vision:   "Agents running day to day work with execs making decisions"
+        },
+        justifications: [
+            {
+                cat: "Leadership & Vision", tagId: "L1",
+                tagLabel: "L1 - Strategic AI Vision",
+                text: "No formal AI roadmap exists. Leadership views AI as a risk rather than an opportunity and has not committed to a structured investment or implementation plan."
+            },
+            {
+                cat: "Leadership & Vision", tagId: "L_Risk",
+                tagLabel: "L_Risk - AI Risk Appetite",
+                text: "Prevailing posture is highly conservative — 'wait until competitors prove it first.' No appetite for experimental AI investments or pilot programs."
+            },
+            {
+                cat: "Ways of Working", tagId: "W_Conflict",
+                tagLabel: "W_Conflict - Conflict Resolution",
+                text: "Frequent unresolved disputes between business and technical teams on AI deployment priorities, timelines, and budget. No structured escalation or resolution process in place."
+            },
+            {
+                cat: "Governance Readiness", tagId: "G_Shadow",
+                tagLabel: "G_Shadow - Shadow AI Confidence",
+                text: "Employees are actively using ChatGPT and other unapproved AI tools. IT has no visibility into what data is being shared externally. No audit trail or usage policy enforcement."
+            },
+            {
+                cat: "Data Readiness", tagId: "D1",
+                tagLabel: "D1 - Data structured & clean",
+                text: "Data is fragmented across multiple legacy systems with no centralized repository. Employees have been entering confidential client data into AI tools without controls or oversight."
+            }
+        ]
+    },
+
+    /* ---- Persona 2: Finance & Risk Leader ---- */
+    financeRisk: {
+        label:   "Finance & Risk Leader — Cmax",
+        name:    "Rachel Chen",
+        org:     "Cmax",
+        role:    "Finance",
+        unit:    "Finance & Risk",
+        sections: ["leadership", "tech", "data"],
+        scores: {
+            L1: 3, L2: 3, L3: 2, L_Risk: 3,
+            W1: 3, W_Conflict: 3, W3: 2,
+            G1: 4, G4: 3, G_Shadow: 2,
+            T1: 3, T2: 3, T4: 2, T5: 4,
+            D1: 3, D2: 2, D3: 3
+        },
+        qualitative: {
+            Q_Decision: "Finance committee has not approved any dedicated AI budget. Without a formal business case and ROI framework, no investment mandate exists at the executive level.",
+            Q_Concerns: "Material risk from uncontrolled AI use — data liability, regulatory compliance (GDPR, SOC2), and inability to quantify ROI. Audit committee is asking questions we cannot yet answer.",
+            Q_Vision:   "Automated financial reporting and anomaly detection in transactions, with AI-assisted contract review — all with clear audit trails and human sign-off on material outputs."
+        },
+        justifications: [
+            {
+                cat: "Leadership & Vision", tagId: "L_Risk",
+                tagLabel: "L_Risk - AI Risk Appetite",
+                text: "No formal AI risk assessment has been conducted. Regulatory exposure is unquantified. Legal has not reviewed any AI tool agreements or data processing implications against current obligations."
+            },
+            {
+                cat: "Governance Readiness", tagId: "G1",
+                tagLabel: "G1 - Solid Governance Structure",
+                text: "An AI governance committee was established six months ago but has produced no binding policy. Meetings are quarterly and lack enforcement authority. No approved AI use-case registry exists."
+            },
+            {
+                cat: "Governance Readiness", tagId: "G_Shadow",
+                tagLabel: "G_Shadow - Shadow AI Confidence",
+                text: "Finance team members are using AI tools for contract review and financial modelling without procurement, legal, or IT approval. This creates material audit and compliance exposure that is currently unmitigated."
+            },
+            {
+                cat: "Data Readiness", tagId: "D1",
+                tagLabel: "D1 - Data structured & clean",
+                text: "Financial data resides in four separate GL systems with no unified data model. Quality is sufficient for statutory reporting but not structured or governed for AI model training or inference workloads."
+            }
+        ]
+    },
+
+    /* ---- Persona 3: HR & Operations Leader ---- */
+    hrOps: {
+        label:   "HR & Operations Leader — Cmax",
+        name:    "Jordan Okafor",
+        org:     "Cmax",
+        role:    "HR",
+        unit:    "People & Operations",
+        sections: ["hr", "leadership"],
+        scores: {
+            L1: 2, L2: 2, L3: 1, L_Risk: 2,
+            C1: 3, C3: 2, C_Fatigue: 2
+        },
+        qualitative: {
+            Q_Decision: "No one in the organization can clearly identify who owns AI decisions. Accountability falls between IT, the CTO's office, and line-of-business VPs with no clear mandate.",
+            Q_Concerns: "Employees are worried about job displacement and feel excluded from conversations about how AI will change their roles. The informal rumour mill is more active than any official communication channel.",
+            Q_Vision:   "AI removing repetitive administrative burden from employees — freeing time for higher-value work — paired with a genuine upskilling and reskilling programme that employees can trust and engage with."
+        },
+        justifications: [
+            {
+                cat: "Culture & Workforce", tagId: "C_Fatigue",
+                tagLabel: "C_Fatigue - Transformation Legacy",
+                text: "The organisation has completed three major transformation programmes in five years. Employees now respond to AI initiative announcements with visible scepticism and low engagement from the outset."
+            },
+            {
+                cat: "Culture & Workforce", tagId: "C3",
+                tagLabel: "C3 - Employees Willingness to Embrace AI",
+                text: "An informal pulse survey found 60% of employees describe themselves as worried or indifferent about AI adoption. Only 15% used the word excited. Participation in voluntary AI pilot programmes was under 8%."
+            },
+            {
+                cat: "Culture & Workforce", tagId: "C1",
+                tagLabel: "C1 - Organization Aligns to Business Priorities",
+                text: "AI-related objectives are absent from individual performance goals and team OKRs. Alignment to AI priorities is aspirational in leadership communications but not operationalised at the team level."
+            },
+            {
+                cat: "Leadership & Vision", tagId: "L1",
+                tagLabel: "L1 - Strategic AI Vision",
+                text: "Leadership has made no visible investment in AI literacy programmes or employee-facing responsible-use guidelines. Employees are navigating AI adoption individually without organisational support or a framework."
+            }
+        ]
+    }
+};
+
+function loadDemo(personaKey) {
+    const p = _DEMO_PERSONAS[personaKey];
+    if (!p) return;
+
+    // Identity
+    document.getElementById("userName").value       = p.name;
+    document.getElementById("orgName").value        = p.org;
+    document.getElementById("respondentRole").value = p.role;
+    document.getElementById("orgUnit").value        = p.unit || "";
+
+    // Sections
     document.querySelectorAll('input[name="userSection"]').forEach(cb => {
-        cb.checked = ["leadership", "tech", "data", "hr"].includes(cb.value);
+        cb.checked = p.sections.includes(cb.value);
     });
     filterQuestions();
 
-    // Likert scores from Max / Cmax session
-    const scores = {
-        L1: 2, L2: 2, L3: 1, L_Risk: 2,
-        W1: 4, W_Conflict: 2, W3: 5,
-        G1: 3, G4: 3, G_Shadow: 2,
-        T1: 4, T2: 3, T4: 4, T5: 5,
-        D1: 2, D2: 3, D3: 2
-    };
-    for (const [name, val] of Object.entries(scores)) {
+    // Likert scores — clear all first, then set
+    document.querySelectorAll('.q-wrapper input[type="radio"]').forEach(r => { r.checked = false; });
+    for (const [name, val] of Object.entries(p.scores)) {
         const radio = document.querySelector(`input[name="${name}"][value="${val}"]`);
         if (radio) radio.checked = true;
     }
 
     // Qualitative textarea responses
-    const qdEl = document.querySelector('textarea[name="Q_Decision"]');
-    if (qdEl) qdEl.value = "do not invest in AI";
-    const qcEl = document.querySelector('textarea[name="Q_Concerns"]');
-    if (qcEl) qcEl.value = "Money and hiring new employees";
-    const qvEl = document.querySelector('textarea[name="Q_Vision"]');
-    if (qvEl) qvEl.value = "Agents running day to day work with execs making decisions";
+    for (const [name, val] of Object.entries(p.qualitative || {})) {
+        const el = document.querySelector(`textarea[name="${name}"]`);
+        if (el) el.value = val;
+    }
 
-    // Justifications — text only (original audio recordings were ephemeral / NDA)
+    // Justifications
     JUSTIFICATIONS.length = 0;
-    const demoNotes = [
-        {
-            cat: "Leadership & Vision", tagId: "L1",
-            tagLabel: "L1 - Strategic AI Vision",
-            text: "No formal AI roadmap exists. Leadership views AI as a risk rather than an opportunity and has not committed to a structured investment or implementation plan."
-        },
-        {
-            cat: "Leadership & Vision", tagId: "L_Risk",
-            tagLabel: "L_Risk - AI Risk Appetite",
-            text: "Prevailing posture is highly conservative — 'wait until competitors prove it first.' No appetite for experimental AI investments or pilot programs."
-        },
-        {
-            cat: "Ways of Working", tagId: "W_Conflict",
-            tagLabel: "W_Conflict - Conflict Resolution",
-            text: "Frequent unresolved disputes between business and technical teams on AI deployment priorities, timelines, and budget. No structured escalation or resolution process in place."
-        },
-        {
-            cat: "Governance Readiness", tagId: "G_Shadow",
-            tagLabel: "G_Shadow - Shadow AI Confidence",
-            text: "Employees are actively using ChatGPT and other unapproved AI tools. IT has no visibility into what data is being shared externally. No audit trail or usage policy enforcement."
-        },
-        {
-            cat: "Data Readiness", tagId: "D1",
-            tagLabel: "D1 - Data structured & clean",
-            text: "Data is fragmented across multiple legacy systems with no centralized repository. Employees have been entering confidential client data into AI tools without controls or oversight."
-        }
-    ];
     const affectedCats = new Set();
-    for (const note of demoNotes) {
+    for (const note of (p.justifications || [])) {
         JUSTIFICATIONS.push({ ...note, audioUrl: null, transcribed: false, ts: new Date().toISOString() });
         affectedCats.add(note.cat);
     }
@@ -2384,7 +3350,14 @@ function loadDemoData() {
         renderJustificationList(cat);
     }
 
-    // Scroll to top of form
+    // Confirmation banner
+    const banner = document.getElementById("demo-loaded-banner");
+    if (banner) {
+        banner.textContent = `✓ Loaded: ${p.label}`;
+        banner.style.display = "";
+    }
+
+    // Scroll to form
     document.querySelector(".setup-section").scrollIntoView({ behavior: "smooth" });
 }
 

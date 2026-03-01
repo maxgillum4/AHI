@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import os
 import re
+import uuid
 from typing import Dict, List, Optional, Tuple
 
 from heuristics import (
@@ -410,6 +411,10 @@ def analyze_question(
     excerpt_raw = " | ".join(filter(None, justification_texts + [question.typed_response]))
     excerpt = _excerpt(redact_pii(excerpt_raw)) if excerpt_raw else None
 
+    # Stable evidence ID — generated here so DB, PerQuestionResult, and
+    # FollowupQueueItem all share the same reference for this evidence unit.
+    evidence_id = str(uuid.uuid4())
+
     return PerQuestionResult(
         question_id=question.question_id,
         category=question.category,
@@ -428,6 +433,7 @@ def analyze_question(
         red_flags=red_flags,
         recommended_followups=probes,
         supporting_text_excerpt=excerpt,
+        evidence_id=evidence_id,
     )
 
 
@@ -685,6 +691,7 @@ def build_followup_queue(per_question: List[PerQuestionResult]) -> List[Followup
             prior_score             = q.self_score,
             confidence              = q.confidence,
             supporting_text_excerpt = q.supporting_text_excerpt,
+            evidence_id             = q.evidence_id,
         ))
 
     return sorted(queue, key=lambda x: _priority_order.get(x.priority, 3))
@@ -728,9 +735,16 @@ def analyze_assessment(payload: AssessmentPayload) -> AnalysisResponse:
     blockers, quick_wins = identify_blockers_and_wins(per_question, dimensions)
 
     # Step 5: Next actions
+    # low_conf_count: conservative threshold used to gate human-followup flag
     low_conf_count = sum(
         1 for q in per_question
         if q.confidence < HUMAN_FOLLOWUP_CONFIDENCE_THRESHOLD
+    )
+    # quality_note_low_count: matches the "Low" confidence_label threshold (< 0.50)
+    # so the summary text stays consistent with the verify panel item count
+    quality_note_low_count = sum(
+        1 for q in per_question
+        if q.confidence_label == ConfidenceLabel.LOW
     )
     # Any critical flag (Anti-AI, Strategic Resistance) forces human followup
     critical_flags = sum(
@@ -741,16 +755,16 @@ def analyze_assessment(payload: AssessmentPayload) -> AnalysisResponse:
 
     next_actions = generate_next_best_actions(per_question, dimensions, needs_followup)
 
-    # Step 6: Quality note
+    # Step 6: Quality note (uses label-consistent count so it matches the verify panel)
     quality_note = ASSESSMENT_QUALITY_NOTE_TEMPLATE.format(
-        low_confidence_count=low_conf_count,
+        low_confidence_count=quality_note_low_count,
         total_questions=len(per_question),
     )
 
     # Optional: LLM synthesis override for quality note
-    if low_conf_count > 0:
+    if quality_note_low_count > 0:
         llm_note = _try_llm_synthesis(
-            f"In 2 sentences, explain why {low_conf_count} of {len(per_question)} questions "
+            f"In 2 sentences, explain why {quality_note_low_count} of {len(per_question)} questions "
             f"returned low-confidence scores in an AI maturity assessment. Emphasize the "
             f"importance of named owners, specific KPIs, and operational evidence."
         )

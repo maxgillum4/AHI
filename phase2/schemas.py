@@ -68,6 +68,13 @@ class V2Session(BaseModel):
     turns:             List[ConversationTurn]        = Field(default_factory=list)
     extracted_answers: Dict[str, ExtractedAnswer]   = Field(default_factory=dict)
 
+    # Follow-up session tracking (Chunk 2)
+    # Set when the session is started from a persisted submission via /followup/start.
+    # Drives the wrap pipeline to patch DB + re-run Phase 1.
+    source_submission_id: Optional[str] = None
+    source_question_id:   Optional[str] = None
+    source_evidence_id:   Optional[str] = None
+
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     expires_at: datetime = Field(default_factory=datetime.utcnow)  # set by store
@@ -127,7 +134,9 @@ class TurnResponse(BaseModel):
     assistant_text:   str
     is_complete:      bool                    = False
     # Populated only when is_complete=True
-    compiled_payload: Optional[Dict[str, Any]] = None
+    compiled_payload:    Optional[Dict[str, Any]] = None
+    # Populated only for follow-up sessions (source_submission_id set) on wrap
+    refreshed_analysis:  Optional[Dict[str, Any]] = None
 
 
 class SessionStatusResponse(BaseModel):
@@ -138,3 +147,21 @@ class SessionStatusResponse(BaseModel):
     questions_answered: int
     is_complete:        bool
     expires_at:         datetime
+
+
+# ---------------------------------------------------------------------------
+# Follow-up session request/response (Chunk 2)
+# ---------------------------------------------------------------------------
+
+class FollowupStartRequest(BaseModel):
+    """
+    Start a bounded follow-up interview from a persisted Phase 1 submission.
+
+    The session will be tightly scoped to the single flagged question identified
+    by question_id. On wrap, the persisted submission is patched and re-analyzed.
+    """
+    submission_id:    str = Field(..., max_length=36)
+    question_id:      str = Field(..., max_length=50)
+    probe_override:   Optional[str] = Field(None, max_length=1000)
+    respondent_name:  Optional[str] = Field(None, max_length=150)
+    organization_name: Optional[str] = Field(None, max_length=150)

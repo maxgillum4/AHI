@@ -99,12 +99,37 @@ class TemplateGenerator(TurnGenerator):
         "If this were rated 1 point lower, what would look different?",
     ]
 
+    # Priority order for which missing signal to ask about first
+    _SIGNAL_PRIORITY = ["ownership", "metrics", "cadence", "system", "specificity"]
+
+    # Targeted one-shot questions per missing signal category
+    _SIGNAL_QUESTIONS: dict[str, str] = {
+        "ownership":   "Who specifically owns this — a named individual or team with clear accountability?",
+        "metrics":     "What KPI or metric tracks progress here, and what does that number look like today?",
+        "cadence":     "How frequently is this reviewed, and who's in the room when it is?",
+        "system":      "Which platform, tool, or system actually supports this today — by name?",
+        "specificity": "Can you give me one concrete example of this in practice from the last 90 days?",
+    }
+
     def clarify(
         self,
         session:         V2Session,
         question:        QuestionBankItem,
         clarify_attempt: int,
     ) -> str:
+        from ..state_machine import missing_signals
+
+        # Pull the last user turn to diagnose what's missing
+        last_user = next(
+            (t.text for t in reversed(session.turns) if t.role == "user"), ""
+        )
+        if last_user:
+            missing = missing_signals(last_user)
+            for sig in self._SIGNAL_PRIORITY:
+                if sig in missing:
+                    return self._SIGNAL_QUESTIONS[sig]
+
+        # Fallback: generic bank (nothing clearly missing, or text too short)
         bank = self._CLARIFY_BANK_2 if clarify_attempt >= 2 else self._CLARIFY_BANK_1
         return random.choice(bank)
 

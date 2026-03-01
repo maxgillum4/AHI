@@ -10,6 +10,7 @@ Endpoints:
   POST /api/v2/session/turn
   GET  /api/v2/session/{session_id}
   DELETE /api/v2/session/{session_id}
+  POST /api/v2/followup/start        ← Chunk 2
 
 NDA:
   - Turn text is stored in RAM only for the session lifetime (max 2h TTL).
@@ -31,6 +32,7 @@ from .schemas import (
     ConversationState,
     ConversationTurn,
     ExtractedAnswer,
+    FollowupStartRequest,
     InterviewMode,
     QuestionBankItem,
     QuestionBankResponse,
@@ -50,6 +52,9 @@ router = APIRouter()
 # Single shared generator instance (TemplateGenerator is stateless)
 _generator = build_generator()
 
+# question_id → QuestionBankItem lookup (built once at import time)
+_QUESTION_BY_ID: Dict[str, QuestionBankItem] = {q.question_id: q for q in QUESTIONS}
+
 
 # ---------------------------------------------------------------------------
 # GET /api/v2/health
@@ -63,7 +68,7 @@ async def v2_health() -> dict:
         "status": "ok",
         "version": "2.0",
         "phase": "phase_2_conversational_engine",
-        "chunk": "1_foundation",
+        "chunk": "2_followup_loop",
         "generation_mode": get_generation_mode(),
         "active_sessions": store.count(),
         "question_bank_size": len(QUESTIONS),
@@ -151,6 +156,90 @@ async def session_start(body: SessionStartRequest) -> SessionStartResponse:
 
 
 # ---------------------------------------------------------------------------
+# POST /api/v2/followup/start  (Chunk 2)
+# ---------------------------------------------------------------------------
+
+@router.post("/followup/start", response_model=SessionStartResponse)
+async def followup_start(body: FollowupStartRequest) -> SessionStartResponse:
+    """
+    Start a bounded follow-up interview from a persisted Phase 1 submission.
+
+    The session is tightly scoped to a single flagged question.
+    On wrap, the submission is patched and Phase 1 is re-run.
+    """
+    from db.repository import get_submission
+
+    # Load the persisted submission
+    sub_data = get_submission(body.submission_id)
+    if sub_data is None:
+        raise HTTPException(status_code=404, detail="Submission not found.")
+
+    # Find the target per-question row
+    pqr_rows = {r["question_id"]: r for r in sub_data["per_question"]}
+    pqr = pqr_rows.get(body.question_id)
+    if pqr is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Question '{body.question_id}' not found in submission.",
+        )
+
+    # Determine probe text (priority: explicit override → Phase 1 recommended → generic)
+    if body.probe_override:
+        probe_text = body.probe_override
+    elif pqr["recommended_followups"]:
+        probe_text = pqr["recommended_followups"][0]
+    else:
+        probe_text = (
+            f"I'd like to revisit your response on '{pqr['label']}'. "
+            "Can you walk me through the specifics — who owns this, "
+            "how it's measured, and what cadence you use to review it?"
+        )
+
+    # Resolve respondent/org names: prefer request body, fall back to DB
+    sub_header = sub_data["submission"]
+    respondent_name   = body.respondent_name   or sub_header.get("respondent_name")
+    organization_name = body.organization_name or sub_header.get("organization_name")
+
+    now        = datetime.utcnow()
+    session_id = uuid.uuid4()
+
+    session = V2Session(
+        session_id            = session_id,
+        mode                  = InterviewMode.B,
+        respondent_name       = respondent_name,
+        organization_name     = organization_name,
+        respondent_role       = sub_header.get("respondent_role"),
+        organization_unit     = sub_header.get("organization_unit"),
+        followup_queue        = [body.question_id],
+        probe_overrides       = {body.question_id: probe_text},
+        state                 = ConversationState.ASK,
+        created_at            = now,
+        updated_at            = now,
+        expires_at            = store.new_expiry(),
+        # Follow-up tracking
+        source_submission_id  = body.submission_id,
+        source_question_id    = body.question_id,
+        source_evidence_id    = pqr.get("evidence_id"),
+    )
+
+    # Opening + first probe
+    opening_msg = _generator.opening(session)
+    session.turns.append(ConversationTurn(role="assistant", text=opening_msg, timestamp=now))
+    session.turns.append(ConversationTurn(role="assistant", text=probe_text, timestamp=now))
+    opening_text = f"{opening_msg}\n\n{probe_text}"
+
+    store.create(session)
+
+    return SessionStartResponse(
+        session_id   = str(session_id),
+        mode         = session.mode,
+        state        = session.state,
+        opening_text = opening_text,
+        expires_at   = session.expires_at,
+    )
+
+
+# ---------------------------------------------------------------------------
 # POST /api/v2/session/turn
 # ---------------------------------------------------------------------------
 
@@ -181,13 +270,21 @@ async def session_turn(body: TurnRequest) -> TurnResponse:
     questions = _get_session_questions(session)
     total     = len(questions)
 
-    # Store extracted answer stub for this question (Chunk 2 fills real extraction)
+    # Store extracted answer (accumulate across turns for the same question)
     if session.current_question_idx < total:
         current_q = questions[session.current_question_idx]
-        if current_q.question_id not in session.extracted_answers:
-            session.extracted_answers[current_q.question_id] = ExtractedAnswer(
-                question_id   = current_q.question_id,
-                text_response = body.user_text[:500],  # store first 500 chars
+        qid       = current_q.question_id
+        if qid not in session.extracted_answers:
+            session.extracted_answers[qid] = ExtractedAnswer(
+                question_id   = qid,
+                text_response = body.user_text[:500],
+            )
+        else:
+            # Append follow-up text to existing answer
+            existing = session.extracted_answers[qid].text_response or ""
+            combined = (existing + " " + body.user_text).strip()
+            session.extracted_answers[qid] = session.extracted_answers[qid].model_copy(
+                update={"text_response": combined[:1000]}
             )
 
     # Compute transition
@@ -204,19 +301,28 @@ async def session_turn(body: TurnRequest) -> TurnResponse:
 
     # Terminal: session complete
     if transition.is_terminal or session.state == ConversationState.WRAP:
-        session.state  = ConversationState.WRAP
-        wrap_text      = _generator.wrap(session)
-        compiled       = _compile_payload(session, questions)
-
+        session.state = ConversationState.WRAP
+        wrap_text     = _generator.wrap(session)
         session.turns.append(ConversationTurn(role="assistant", text=wrap_text, timestamp=now))
         store.update(session)
 
+        # Follow-up sessions: patch DB + re-run Phase 1
+        refreshed_analysis: Optional[Dict[str, Any]] = None
+        if session.source_submission_id:
+            try:
+                refreshed_analysis = _wrap_followup_session(session, questions)
+            except Exception as e:
+                print(f"[AHI] followup wrap error (non-fatal): {e}")
+
+        compiled = _compile_payload(session, questions)
+
         return TurnResponse(
-            session_id       = body.session_id,
-            state            = ConversationState.WRAP,
-            assistant_text   = wrap_text,
-            is_complete      = True,
-            compiled_payload = compiled,
+            session_id          = body.session_id,
+            state               = ConversationState.WRAP,
+            assistant_text      = wrap_text,
+            is_complete         = True,
+            compiled_payload    = compiled,
+            refreshed_analysis  = refreshed_analysis,
         )
 
     # Non-terminal: generate next utterance
@@ -349,3 +455,98 @@ def _compile_payload(
         "source_mode":       session.mode.value,
         "session_id":        str(session.session_id),
     }
+
+
+def _wrap_followup_session(
+    session:   V2Session,
+    questions: List[QuestionBankItem],
+) -> Dict[str, Any]:
+    """
+    Follow-up session wrap pipeline:
+      1. Collect accumulated user text for the flagged question
+      2. Reconstruct AssessmentPayload from DB (original scores + patched typed_response)
+      3. Re-run Phase 1 analyzer
+      4. Persist refreshed result, mark question as followup_resolved
+      5. Return the refreshed AnalysisResponse as a dict
+
+    NDA: accumulated user text is used in-memory only for re-analysis.
+         The raw text is never written to the DB.
+    """
+    from analyzer import analyze_assessment
+    from db.repository import get_submission, update_submission_result
+    from hybrid_analyst import generate_hybrid_summary
+    from schema import AssessmentPayload, QuestionResponse
+
+    submission_id = session.source_submission_id
+    question_id   = session.source_question_id
+
+    # 1. Collect all user turns for the target question
+    user_turns = [
+        t.text for t in session.turns
+        if t.role == "user"
+    ]
+    followup_text = " ".join(user_turns).strip()
+
+    # 2. Load persisted submission
+    sub_data = get_submission(submission_id)
+    if sub_data is None:
+        raise ValueError(f"Submission {submission_id} not found in DB")
+
+    sub_header = sub_data["submission"]
+    pqr_rows   = sub_data["per_question"]
+
+    # 3. Reconstruct AssessmentPayload
+    q_responses: List[QuestionResponse] = []
+    for row in pqr_rows:
+        qid   = row["question_id"]
+        # Prompt: look up from question bank; fall back to label
+        q_obj = _QUESTION_BY_ID.get(qid)
+        prompt = q_obj.prompt if q_obj else row.get("label", qid)
+
+        # Patch the target question with the follow-up text
+        typed = followup_text if qid == question_id else None
+
+        q_responses.append(QuestionResponse(
+            question_id    = qid,
+            category       = row["category"],
+            label          = row.get("label", ""),
+            prompt         = prompt,
+            score          = row.get("self_score"),
+            typed_response = typed,
+        ))
+
+    if not q_responses:
+        raise ValueError("No questions found for reconstruction")
+
+    payload = AssessmentPayload(
+        payload_version   = sub_header.get("payload_version", "1.0"),
+        respondent_name   = sub_header["respondent_name"],
+        organization_name = sub_header["organization_name"],
+        respondent_role   = sub_header.get("respondent_role"),
+        organization_unit = sub_header.get("organization_unit"),
+        selected_sections = [],   # not used by Phase 1 analysis
+        questions         = q_responses,
+        justifications    = [],
+    )
+
+    # 4. Re-run Phase 1 analyzer
+    refreshed = analyze_assessment(payload)
+
+    # Attach submission_id so frontend can reference the updated record
+    refreshed = refreshed.model_copy(update={"submission_id": submission_id})
+
+    # Optional benchmarking (non-fatal)
+    try:
+        hybrid = generate_hybrid_summary(payload, refreshed)
+        refreshed = refreshed.model_copy(update={"hybrid_analyst": hybrid})
+    except Exception:
+        pass
+
+    # 5. Persist refreshed result
+    update_submission_result(
+        submission_id         = submission_id,
+        result                = refreshed,
+        resolved_question_id  = question_id,
+    )
+
+    return refreshed.model_dump()
