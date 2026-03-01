@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -41,11 +42,14 @@ async def serve_frontend() -> HTMLResponse:
 
 @app.on_event("startup")
 async def startup_event() -> None:
+    from db.database import init_db
+    init_db()
+
     from hybrid_analyst import load_benchmark
     df = load_benchmark()
     n = len(df) if not df.empty else 0
     print(f"[AHI] Benchmark dataset: {n} respondents loaded.")
     print("[AHI] Whisper model loaded in routes.py.")
     print("[AHI] Phase 2 conversational engine: /api/v2/")
-    print("[AHI] Diagnostic Reasoning Engine ready on http://127.0.0.1:8001")
-    print("[AHI] API docs: http://127.0.0.1:8001/docs")
+    print(f"[AHI] Diagnostic Reasoning Engine ready. PORT={os.getenv('PORT', '8001')}")
+    print("[AHI] API docs: /docs")
